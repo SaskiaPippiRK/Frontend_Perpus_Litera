@@ -14,14 +14,14 @@ export default function BukuEdit() {
         lokasi_buku: "",
     });
 
-    // useEffect(() => {
-    //     const dataDummy = {
-    //         1: { judul: "A", penulis: "A", penerbit: "A", tahun_terbit: 2020, kategori: "Fiksi", lokasi_buku: "A1" },
-    //         2: { judul: "B", penulis: "B", penerbit: "B", tahun_terbit: 2021, kategori: "Non-Fiksi", lokasi_buku: "A2" }
-    //     };
+    useEffect(() => {
+        const dataDummy = {
+            1: { judul: "A", penulis: "A", penerbit: "A", tahun_terbit: 2020, kategori: "Fiksi", lokasi_buku: "A1" },
+            2: { judul: "B", penulis: "B", penerbit: "B", tahun_terbit: 2021, kategori: "Non-Fiksi", lokasi_buku: "A2" }
+        };
 
-    //     if (dataDummy[id_buku]) setFormData(dataDummy[id_buku]);
-    // }, [id_buku]);
+        if (dataDummy[id_buku]) setFormData(dataDummy[id_buku]);
+    }, [id_buku]);
 
 
     const handleChange = (e) => {
