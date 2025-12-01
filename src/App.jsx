@@ -6,6 +6,8 @@ import MainLayout from "./layouts/MainLayout";
 
 import LoginPage from "./pages/LoginPage";
 
+import RegisterPage from './pages/RegisterPage';
+
 //Pustakawan
 import BukuIndexPustakawan from "./pages/Pustakawan/PustakawanIndex";
 
@@ -43,6 +45,8 @@ function App()
                 <Route path="/login" element={<LoginPage/>} />
 
                 <Route path="/" element={<Navigate to="/login" replace />} />
+
+                <Route path="/register" element={<RegisterPage/>}/>
 
                 <Route element={<MainLayout />}>
                     <Route path="/pustakawan/buku" element={
