@@ -1,41 +1,59 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
-export default function BukuIndex() {
+const API_BASE_URL = 'http://localhost:8000/api';
+
+const BukuIndex = () => {
     const navigate = useNavigate();
-    const [allBuku, setAllBuku] = useState([
-    {
-        id_buku: 1,
-        judul: "A",
-        penulis: "A",
-        penerbit: "A",
-        tahun_terbit: 2020,
-        kategori: "Fiksi",
-        lokasi_buku: "A1",
-    },
-    {
-        id_buku: 2,
-        judul: "B",
-        penulis: "B",
-        penerbit: "B",
-        tahun_terbit: 2021,
-        kategori: "Non-Fiksi",
-        lokasi_buku: "A2",
-    },]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [buku, setBuku] = useState([]);
 
-    const handleHapus = (id) => {
-        if(window.confirm("Apakah Anda Yakin?")) {
-            setAllBuku(allBuku.filter((buku) => buku.id_buku != id));
+    const fetchBuku = async () => {
+        try 
+        {
+            const response = await axios.get(`${API_BASE_URL}/buku`);
+            setBuku(response.data);
+            setLoading(false);
+        } catch(err) 
+        {
+            setError("Gagal memuat data Buku dari API Laravel.");
+            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchBuku();
+    }, []);
+
+    const handleDelete = async(id) => {
+        if(window.confirm("Apakah Anda yakin ingin menghapus buku ini?"))
+        {
+            try
+            {
+                await axios.delete(`${API_BASE_URL}/buku/delete/${id}`);
+                alert("Buku berhasil dihapus!");
+
+                fetchBuku();
+            } catch(err)
+            {
+                console.error("Gagal menghapus buku: ", err);
+                alert("Gagal menghapus buku. Cek console untuk detail");
+            }
+        }
+    };
+
+    if(loading) return <div className="p-4 text-center">Memuat data...</div>;
+    if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="content-area py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
-                    <h2 className = "page-title">Buku</h2>
+                    <h2 className = "page-title">Buku ANGGOTA</h2>
 
-                    <button className="btn btn-primary-tambah" onClick={() => navigate("/buku/create")}>
+                    <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/buku/create")}>
                         Tambah Buku
                     </button>
 
@@ -53,7 +71,7 @@ export default function BukuIndex() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {allBuku.map((buku) => (
+                                {buku.map((buku, index) => (
                                     <tr key={buku.id_buku}>
                                         <td className="text-center">{buku.judul}</td>
                                         <td className="text-center">{buku.penulis}</td>
@@ -62,18 +80,20 @@ export default function BukuIndex() {
                                         <td className="text-center">{buku.kategori}</td>
                                         <td className="text-center">{buku.lokasi_buku}</td>
                                         <td className="text-center">
-                                            <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/buku/edit/${buku.id_buku}`)}>
-                                                    EDIT
-                                                </button>
-                                                <button className="btn btn-primary-danger" onClick={() => handleHapus(buku.id_buku)}>
-                                                    HAPUS
-                                                </button>
+                                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "8px" }}>
+                                                <Link to={`/pustakawan/buku/edit/${buku.id_buku}`} className="btn btn-primary-edit">
+                                                    <i ></i> EDIT
+                                                </Link>
+
+                                                <button onClick={() => handleDelete(buku.id_buku)} className="btn btn-primary-danger">
+                                                        <i></i> HAPUS
+                                                    </button>
+                                        
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
-                                {allBuku.length === 0 && (
+                                {buku.length === 0 && (
                                 <tr>
                                     <td colSpan={7} className="text-center">
                                     Tidak ada data buku
@@ -88,3 +108,5 @@ export default function BukuIndex() {
         </div>
     );
 }
+
+export default BukuIndex;

@@ -21,13 +21,13 @@ export default function Sidebar() {
             active: iconBukuSelected,
         },
         {
-            path: "/pustakawan/buku",
+            path: "/pustakawan/peminjaman",
             label: "Peminjaman",
             normal: iconPeminjamanNormal,
             active: iconPeminjamanSelected,
         },
         {
-            path: "/pustakawan/buku",
+            path: "/pustakawan/detailPeminjaman",
             label: "Detail",
             normal: iconDetailNormal,
             active: iconDetailSelected,

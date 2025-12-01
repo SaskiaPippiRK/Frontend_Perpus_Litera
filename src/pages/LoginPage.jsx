@@ -6,7 +6,7 @@ import Logo from '../assets/img/LogoLitera.png';
 
 const API_LOGIN_URL = 'http://localhost:8000/api/login'; 
 
-const Login = () => {
+const LoginPage = () => {
   const [formData, setFormData] = useState({ 
     email: '', 
     password: '' 
@@ -103,4 +103,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
