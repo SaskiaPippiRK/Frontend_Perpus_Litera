@@ -1,0 +1,381 @@
+body {
+    background-color: #F4EAEB;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #FFFFFF;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.layout-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.main-sidebar {
+    background-color: #2c3e50;
+}
+
+.nav-sidebar .nav-link {
+    color: #ecf0f1;
+    transition: 0.1s;
+}
+
+.navbar-brand .logo-img {
+    height: 30px;
+    width: auto;
+    margin-right: 8px;
+    margin-left: 20px;
+    margin-top: 12px;
+}
+
+.icon-box {
+    width: 32px;
+    height: 32px;
+    margin-left: 0px;
+    background-color: #F4EAEB;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-item-large .btn-text {
+    font-size: 32px;
+}
+
+.icon-img {
+    width: 24px;
+    object-fit: contain;
+}
+
+.logo-img {
+    width: 100px;
+    margin-left: 30px;
+}
+
+.menu-item {
+    justify-content: flex-start;
+}
+
+.menu-item:hover .icon-box {
+    background-color: #E4B3B8;
+}
+
+.menu-item.active .btn-text {
+    color: #000000;
+}
+
+.menu-item.active .icon-box {
+    background-color: #C1121F;
+}
+
+.active-img {
+    display: none;
+}
+
+.menu-item.active .normal-img {
+    display: none;
+}
+
+.menu-item.active .active-img {
+    display: block;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #A99698;
+    padding: 8px 10px;
+    border-radius: 12px;
+    margin-bottom: 11px;
+    margin-right: -5px;
+    /* transition: all 0.1s ease; */
+    gap: 10px;
+}
+
+.menu-item span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #A99698;
+}
+
+.menu-item.active span {
+    color: #000000;
+}
+
+.content-area {
+    margin-left: 10px;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #ffffff;
+    padding: 1rem;
+}
+
+.content-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+    max-width: 3000px;
+    margin: auto;
+    padding: 15px;
+}
+
+.content-card h3 {
+    color: #334155;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.alert {
+    border-radius: 12px;
+}
+
+.input-group .form-control {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.input-group .btn {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.page-title {
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary-cari {
+    margin-left: 8px;
+    margin-top: 10px;
+    background-color: #C1121F; 
+    color: white;
+    border: none;
+    border-radius: 5px;         
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-primary-tambah {
+    margin-top: 10px;
+    background-color: #C1121F; 
+    color: white;
+    border: none;
+    border-radius: 5px;         
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-danger {
+    margin-top: 0px;
+    background-color: #C1121F; 
+    color: white;
+    border: none;
+    border-radius: 5px;         
+    padding: 8px 12px;
+    height: 36px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-primary-edit {
+    margin-top: 10px;
+    background-color: #FFFFFF; 
+    border: 2px solid #C1121F;
+    color: #C1121F;
+    border-radius: 5px;         
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.label-box {
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+}
+
+.alert-warning {
+    margin-top: 10px;
+    color: #C1121F;
+}
+
+.form-control {
+    margin-top: 10px;
+    width: 300px; 
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.table-border {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden; 
+    margin-top: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-family: 'Inter', sans-serif;
+}
+
+.table-border th, 
+.table-border td {
+    padding: 12px 16px; 
+    border-bottom: 1px solid #e5e5e5;
+    text-align: center;
+    font-size: 14px;
+}
+
+.table-border th {
+    background-color: #f7f9fc;
+    font-weight: 600;
+    color: #333;
+}
+
+.table-border tr:hover {
+    background-color: #f1f7ff; 
+}
+
+.table-border tr:last-child td {
+    border-bottom: none; 
+}
+
+.login-btn {
+    display: flex;
+    gap: 15px;
+}
+
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100vh; 
+}
+
+.login-card {
+    height: 510px;
+    width: 425px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.login-card .form-control {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 400px;
+    height: 50px;
+    margin-top: 30px;
+    font-size: 20px;
+}
+
+.login-card img {
+    margin-top: 50px;
+    width: 150px;
+    height: 50px;
+    margin-left: -5px;
+}
+
+.login-card h5 {
+    font-weight: 200;
+    margin-top: 5px;
+}
+
+.login button {
+    background-color: #C1121F;
+    margin-left: 10px;
+    width: 400px;
+    height: 50px;
+    color: #ffffff;
+    font-size: 20px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 8px;
+}
+
+.login button:hover {
+    background-color: #E4B3B8;
+}
+
+.login a {
+    color: #000;
+}
+
+.register {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100vh; 
+}
+
+.register-card {
+    height: 510px;
+    width: 425px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.register-card .form-control {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 400px;
+    height: 50px;
+    margin-top: 30px;
+    font-size: 20px;
+}
+
+.register-card img {
+    margin-top: 30px;
+    width: 60px;
+    height: 20px;
+    margin-left: -310px;
+}
+
+.register-card h5 {
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.register button {
+    background-color: #C1121F;
+    margin-left: 10px;
+    width: 400px;
+    height: 50px;
+    color: #ffffff;
+    font-size: 20px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 8px;
+}
+
+.register button:hover {
+    background-color: #E4B3B8;
+}
+
+.register a {
+    color: #000;
+}
