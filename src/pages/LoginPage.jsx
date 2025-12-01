@@ -56,51 +56,62 @@ const LoginPage = () => {
     }
   };
 
-  return (
-    <div className="login">
-      <div className="login-card">
-        <img src={Logo} alt="Litera Logo" className="logo-img" />
-        <h5>Library Management</h5>
+return (
+  <div className="auth-page">
+    <div className="auth-card">
+      <img src={Logo} alt="Litera Logo" className="auth-logo" />
 
-        <form onSubmit={handleSubmit}>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            className="form-control" 
-            value={formData.email} 
-            placeholder="Masukkan Email" 
-            onChange={handleChange} 
-            required
-          />
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            className="form-control" 
-            value={formData.password} 
-            placeholder="Masukkan Password" 
-            onChange={handleChange} 
-            required
-          />
-          <div className="login-btn">
-            <button 
-              type="submit" 
-              className="btn-primary-tambah" 
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Loading...' : 'Sign In'}
-            </button>
-          </div>
-        </form>
+      <h2 className="auth-title">Litera</h2>
+      <p className="auth-subtitle">Library Management</p>
 
-        <h5>
-          Register <a onClick={() => navigate("/register")}><u>here</u></a>
-        </h5>
-      </div>
+      <form onSubmit={handleSubmit} className="auth-form">
+        {error && <div className="alert alert-danger">{error}</div>}
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          className="form-control"
+          value={formData.email}
+          placeholder="Masukkan Email"
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          className="form-control"
+          value={formData.password}
+          placeholder="Masukkan Password"
+          onChange={handleChange}
+          required
+        />
+
+        <button
+          type="submit"
+          className="btn-primary-tambah auth-submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Loading...' : 'Sign In'}
+        </button>
+      </form>
+
+      <p className="auth-switch">
+        Belum punya akun?{' '}
+        <button
+          type="button"
+          className="link-button"
+          onClick={() => navigate('/register')}
+        >
+          Register di sini
+        </button>
+      </p>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default LoginPage;
