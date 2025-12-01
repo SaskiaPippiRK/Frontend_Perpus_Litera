@@ -7,10 +7,10 @@ import MainLayout from "./layouts/MainLayout";
 import LoginPage from "./pages/LoginPage";
 
 //Pustakawan
-import BukuIndexPustakawan from "./pages/Pustakawan/BukuIndex";
+import BukuIndexPustakawan from "./pages/Pustakawan/PustakawanIndex";
 
 //Anggota
-import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
+import BukuIndexAnggota from "./pages/Anggota/AnggotaIndex";
 
 function ProtectedRoute({ children, roles }) {
     const token = localStorage.getItem("auth_token");
