@@ -33,7 +33,7 @@ export default function BukuEdit() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert(Data buku ID ${id_buku} berhasil diubah (simulasi));
+        alert(`Data buku dengan ID ${id_buku} berhasil diubah (simulasi)`);
         navigate("/buku");
     };
 
