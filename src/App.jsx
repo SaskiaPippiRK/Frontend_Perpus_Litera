@@ -8,14 +8,12 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
 //Pustakawan
-import BukuIndexPustakawan from "./pages/Pustakawan/BukuIndex";
-import BukuCreatePustakawan from "./pages/Pustakawan/BukuCreate";
-import BukuEditPustakawan from "./pages/Pustakawan/BukuEdit";
-import PeminjamanIndex from "./pages/Pustakawan/PeminjamanIndex";
-import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjamanIndex';
+import BukuIndexPustakawan from "./pages/Pustakawan/Buku/BukuIndex";
+import BukuCreatePustakawan from "./pages/Pustakawan/Buku/BukuCreate";
+import BukuEditPustakawan from "./pages/Pustakawan/Buku/BukuEdit";
+import PeminjamanIndex from "./pages/Pustakawan/Peminjaman/PeminjamanIndex";
+import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanIndex';
 
-//Anggota
-import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
 
 function ProtectedRoute({ children, roles }) {
     const token = localStorage.getItem("auth_token");
@@ -51,6 +49,7 @@ function App()
                 <Route path="/" element={<Navigate to="/login" replace />} />
 
                 <Route element={<MainLayout />}>
+                    {/* BUKU */}
                     <Route path="/pustakawan/buku" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <BukuIndexPustakawan/>
@@ -69,17 +68,47 @@ function App()
                         </ProtectedRoute>
                     } />
 
+                    {/* PEMINJAMAN */}
+
                     <Route path="/pustakawan/peminjaman" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <PeminjamanIndex/>
                         </ProtectedRoute>
                     } />
 
+                    <Route path="/pustakawan/peminjaman/create" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <PeminjamanCreate/>
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/pustakawan/peminjaman/edit" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <PeminjamanEdit/>
+                        </ProtectedRoute>
+                    } />
+
+                    {/* DETAIL PEMINJAMAN */}
+
                     <Route path="/pustakawan/detailPeminjaman" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <DetailPeminjamanIndex/>
                         </ProtectedRoute>
                     } />
+
+                    <Route path="/pustakawan/detailPeminjaman/create" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <DetailPeminjamanCreate/>
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/pustakawan/detailPeminjaman/edit" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <DetailPeminjamanEdit/>
+                        </ProtectedRoute>
+                    } />
+
+                    {/* ANGGOTA */}
 
                     <Route path="/anggota/buku" element={
                         <ProtectedRoute roles={['anggota']}>

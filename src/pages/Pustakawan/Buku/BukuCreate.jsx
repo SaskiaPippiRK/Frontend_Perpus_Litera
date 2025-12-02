@@ -1,5 +1,5 @@
 import React from 'react';
-import BukuForm from "../../components/BukuForm";
+import BukuForm from "../../../components/BukuForm";
 import { useNavigate } from 'react-router-dom';
 
 const BukuCreate = () => {
