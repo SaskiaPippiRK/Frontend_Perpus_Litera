@@ -33,77 +33,24 @@ export default function PeminjamanCreate() {
 
                     <form onSubmit={handleSubmit} className="mt-3">
                         <div className="mb-3">
-                            <label className="form-label">Judul Peminjaman</label>
+                            <label className="form-label">Tanggal Peminjaman</label>
                             <input 
-                                type="text" 
-                                name="judul" 
+                                type="date" 
+                                name="tanggal peminjaman" 
                                 className="form-control"
-                                value={formData.judul}
+                                value={formData.tanggal_peminjaman}
                                 onChange={handleChange}
                                 required 
                             />
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Penulis</label>
+                            <label className="form-label">Tanggal Pengembalian</label>
                             <input 
-                                type="text" 
-                                name="penulis" 
+                                type="date" 
+                                name="tanggal pengembalian" 
                                 className="form-control"
-                                value={formData.penulis}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Penerbit</label>
-                            <input 
-                                type="text" 
-                                name="penerbit"
-                                className="form-control"
-                                value={formData.penerbit}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Tahun Terbit</label>
-                            <input 
-                                type="number" 
-                                name="tahun_terbit"
-                                className="form-control"
-                                value={formData.tahun_terbit}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Kategori</label>
-                            <select 
-                                name="kategori" 
-                                className="form-control"
-                                value={formData.kategori}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">-- Pilih Kategori --</option>
-                                <option value="Fiksi">Fiksi</option>
-                                <option value="Non-Fiksi">Non-Fiksi</option>
-                                <option value="Referensi">Referensi</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Lokasi Peminjaman</label>
-                            <input 
-                                type="text" 
-                                name="lokasi_peminjaman"
-                                className="form-control"
-                                value={formData.lokasi_peminjaman}
+                                value={formData.tanggal_pengembalian}
                                 onChange={handleChange}
                                 required 
                             />
