@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function PeminjamanCreate() {
     const navigate = useNavigate();
 
+    const [users, setAllUsers] = useState([]);
+
     const [formData, setFormData] = useState({
-        id_peminjaman: '',
+        id_users: '',
         tanggal_peminjaman: '',
         tanggal_pengembalian: '',
     });
@@ -17,13 +21,40 @@ export default function PeminjamanCreate() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        alert("Peminjaman berhasil ditambahkan.");
+        await fetch(`${API_BASE_URL}/peminjaman/peminjaman`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(formData),
+    });
 
-        navigate("/peminjaman");
+    alert("Peminjaman berhasil ditambahkan.");
+    navigate("/peminjaman");
     };
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/peminjaman/users`, {
+                headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+                },
+            });
+            
+            const data = await response.json();
+            setAllUsers(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchUsers();
+    }, []);
 
     return (
         <div className="content-area py-4">
@@ -33,10 +64,29 @@ export default function PeminjamanCreate() {
 
                     <form onSubmit={handleSubmit} className="mt-3">
                         <div className="mb-3">
+                            <label className="form-label">Nama Peminjam</label>
+                            <select
+                                name="id_users"
+                                className="form-control"
+                                value={formData.id_users}
+                                onChange={handleChange}
+                                required>
+
+                                <option value="">-- Pilih Peminjam --</option>
+
+                                {users.map((user) => (
+                                    <option key={user.id_users} value={user.id_users}>
+                                        {user.nama}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mb-3">
                             <label className="form-label">Tanggal Peminjaman</label>
                             <input 
                                 type="date" 
-                                name="tanggal peminjaman" 
+                                name="tanggal_peminjaman" 
                                 className="form-control"
                                 value={formData.tanggal_peminjaman}
                                 onChange={handleChange}
@@ -48,7 +98,7 @@ export default function PeminjamanCreate() {
                             <label className="form-label">Tanggal Pengembalian</label>
                             <input 
                                 type="date" 
-                                name="tanggal pengembalian" 
+                                name="tanggal_pengembalian" 
                                 className="form-control"
                                 value={formData.tanggal_pengembalian}
                                 onChange={handleChange}
