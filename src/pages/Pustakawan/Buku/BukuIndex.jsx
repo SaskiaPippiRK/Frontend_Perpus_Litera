@@ -56,7 +56,7 @@ const BukuIndex = () => {
                     <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/buku/create")}>
                         Tambah Buku
                     </button>
-
+                    
                     <div className="table-responsive mt-3">
                         <table className="table-border">
                             <thead className="table-primary">

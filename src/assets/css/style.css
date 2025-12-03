@@ -630,3 +630,42 @@ select.form-control {
         font-size: 13px;
     }
 }
+
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #FFFFFF;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    gap: 20px;
+}
+
+
+.sidebar .menu-items {
+    flex-grow: 1;
+}
+
+.logout-button {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.logout-button .btn {
+    background-color: #C1121F;
+    color: white;
+    padding: 12px 18px;
+    width: 80%;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    border: none;
+}
+
+.logout-button .btn:hover {
+    background-color: #a20e1a;
+}
