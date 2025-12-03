@@ -12,7 +12,17 @@ import BukuIndexPustakawan from "./pages/Pustakawan/Buku/BukuIndex";
 import BukuCreatePustakawan from "./pages/Pustakawan/Buku/BukuCreate";
 import BukuEditPustakawan from "./pages/Pustakawan/Buku/BukuEdit";
 import PeminjamanIndex from "./pages/Pustakawan/Peminjaman/PeminjamanIndex";
-import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanIndex';
+import PeminjamanCreate from "./pages/Pustakawan/Peminjaman/PeminjamanCreate";
+import PeminjamanEdit from "./pages/Pustakawan/Peminjaman/PeminjamanEdit";
+import DetailPeminjamanCreate from "./pages/Pustakawan/DetailPeminjaman/DetailPeminjamanCreate";
+import DetailPeminjamanIndex from "./pages/Pustakawan/DetailPeminjaman/DetailPeminjamanIndex";
+import DetailPeminjamanEdit from "./pages/Pustakawan/DetailPeminjaman/DetailPeminjamanEdit";
+
+//Anggota
+import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
+import AnggotaCreate from "./pages/Anggota/AnggotaCreate";
+import AnggotaDelete from "./pages/Anggota/AnggotaDelete";
+import AnggotaEdit from "./pages/Anggota/AnggotaEdit";
 
 
 function ProtectedRoute({ children, roles }) {
