@@ -43,7 +43,7 @@ export default function DetailPeminjamanCreate() {
     useEffect(() => {
         const fetchDatas = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman/users`, {
+                const response = await fetch(`${API_BASE_URL}/detailPeminjaman/users`, {
                 headers: {
                 Authorization: "Bearer " + localStorage.getItem("token"),
                 },

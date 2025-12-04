@@ -9,46 +9,57 @@ const DetailPeminjamanEdit = () => {
     const navigate = useNavigate();
     const [allBuku, setAllBuku] = useState([]);
     const [allPeminjaman, setAllPeminjaman] = useState([]);
-    const [users, setUsers] = useState([]);
 
     const [formData, setFormData] = useState({
-        id_users: '',
-        tanggal_peminjaman: '',
-        tanggal_pengembalian: '',
+        id_detailPeminjaman: '',
+        id_peminjaman: '',
+        id_buku: '',
+        jumlah: '',
+        status: '',
+        denda: '',
     });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchPeminjamanData = async () => {
+        const fetchDetailPeminjamanData = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/peminjaman/${id}`);
-
-                const data = response.data.data ?? response.data;
+                const response = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`);
+                const detailPeminjaman = response.data.data ?? response.data;
+                
+                response = await axios.get(`${API_BASE_URL}/buku/${detailPeminjaman.id_buku}`);
+                const buku = response.data.data ?? response.data;
+                response = await axios.get(`${API_BASE_URL}/peminjaman/${detailPeminjaman.id_peminjaman}`);
+                const peminjaman = response.data.data ?? response.data;
 
                 setFormData({
-                    id_users: data.id_users || "",
-                    tanggal_peminjaman: data.tanggal_peminjaman?.slice(0, 10) || "",
-                    tanggal_pengembalian: data.tanggal_pengembalian?.slice(0, 10) || "",
+                    id_detailPeminjaman: detailPeminjaman.id_detailPeminjaman || "",
+                    id_peminjaman: peminjaman.id_peminjaman || "",
+                    id_buku: buku.id_buku || "",
+                    jumlah: detailPeminjaman.jumlah || "",
+                    status: detailPeminjaman.status || "",
+                    denda: detailPeminjaman.denda || "",
                 });
                 setLoading(false);
             } catch(err)
             {
-                console.error("Gagal memuat data Edit Peminjaman: ", err);
-                setError("Gagal memuat data peminjaman. Pastikan ID Peminjaman benar dan API berfungsi.");
+                console.error("Gagal memuat data detail Peminjaman: ", err);
+                setError("Gagal memuat data peminjaman. Pastikan ID Detail Peminjaman benar dan API berfungsi.");
                 setLoading(false);
             }
         };
-        fetchPeminjamanData();
+        fetchDetailPeminjamanData();
     }, [id]);
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            const response = await axios.get(`${API_BASE_URL}/users`);
-            setUsers(response.data.data ?? response.data);
+        const fetchDatas = async () => {
+            const response = await axios.get(`${API_BASE_URL}/peminjaman`);
+            setAllPeminjaman(response.data.data ?? response.data);
+            response = await axios.get(`${API_BASE_URL}/buku`);
+            setAllBuku(response.data.data ?? response.data);
         };
-        fetchUsers();
+        fetchDatas();
     }, []);
 
     const handleChange = (e) => {
@@ -62,15 +73,15 @@ const DetailPeminjamanEdit = () => {
 
         try{
             await axios.post(
-                `${API_BASE_URL}/peminjaman/update/${id}`,
+                `${API_BASE_URL}/detailPeminjaman/update/${id}`,
                 formData,
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            alert("Peminjaman berhasil diperbarui!");
-            navigate('/pustakawan/peminjaman');
+            alert("Detail Data peminjaman berhasil diperbarui!");
+            navigate('/pustakawan/detailPeminjaman');
         } catch(err) {
-            console.error("Gagal memperbarui peminjaman: ", err.response ? err.response.data : err.message);
+            console.error("Gagal memperbarui detail peminjaman: ", err.response ? err.response.data : err.message);
             const serverError = err.response?.data?.message || "Kesalahan koneksi atau validasi";
             setError(`Gagal memperbarui peminjaman: ${serverError}`);
         }
@@ -96,36 +107,53 @@ const DetailPeminjamanEdit = () => {
                                 required>
 
                                 <option value="">-- Pilih Peminjam --</option>
-
-                                {users.map((user) => (
-                                    <option key={user.id_users} value={user.id_users}>
-                                        {user.nama}
+                                {allPeminjaman.map((peminjam) => (
+                                    <option key={peminjam.user.id_users} value={peminjam.user.id_users}>
+                                        {peminjam.user.nama} - {new Date(peminjam.tanggal_peminjaman).toLocaleDateString()}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Tanggal Peminjaman</label>
-                            <input 
-                                type="date" 
-                                name="tanggal_peminjaman" 
+                            <label className="form-label">Buku yang dipinjam</label>
+                            <select
+                                name="id_buku"
                                 className="form-control"
-                                value={formData.tanggal_peminjaman}
+                                value={formData.id_buku}
+                                onChange={handleChange}
+                                required>
+
+                                <option value="">-- Pilih Buku --</option>
+                                {allBuku.map((buku) => (
+                                    <option key={buku.id_buku} value={buku.id_buku}>
+                                        {buku.judul}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Jumlah Peminjaman</label>
+                            <input 
+                                type="number"
+                                name="jumlah" 
+                                className="form-control"
+                                value={formData.jumlah}
                                 onChange={handleChange}
                                 required 
                             />
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Tanggal Pengembalian</label>
+                            <label className="form-label">Denda</label>
                             <input 
-                                type="date" 
+                                type="float" 
                                 name="tanggal_pengembalian" 
                                 className="form-control"
                                 value={formData.tanggal_pengembalian}
                                 onChange={handleChange}
-                                required 
+                                readOnly
                             />
                         </div>
 
