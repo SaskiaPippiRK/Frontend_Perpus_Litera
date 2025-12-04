@@ -17,6 +17,9 @@ import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjamanIndex';
 //Anggota
 import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
 
+//Laporan
+import LaporanPage from "./pages/Laporan/Laporan";
+
 function ProtectedRoute({ children, roles }) {
     const token = localStorage.getItem("auth_token");
     const role = localStorage.getItem("role");
@@ -81,6 +84,12 @@ function App()
                         </ProtectedRoute>
                     } />
 
+                    <Route path="/pustakawan/laporan" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <LaporanPage />
+                        </ProtectedRoute>
+                    } />
+                    
                     <Route path="/anggota/buku" element={
                         <ProtectedRoute roles={['anggota']}>
                             <BukuIndexAnggota/>
