@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function BukuCreate() {
+const API_BASE_URL = 'http://localhost:8000/api';
+
+export default function DetailPeminjamanCreate() {
     const navigate = useNavigate();
+    const [allBuku, setAllBuku] = useState([]);
+    const [allPeminjaman, setAllPeminjaman] = useState([]);
 
     const [formData, setFormData] = useState({
-        judul: "",
-        penulis: "",
-        penerbit: "",
-        tahun_terbit: "",
-        kategori: "",
-        lokasi_buku: "",
+        id_detailPeminjaman: '',
+        id_peminjaman: '',
+        id_buku: '',
+        jumlah: '',
+        status: '',
+        denda: '',
     });
 
     const handleChange = (e) => {
@@ -20,95 +24,106 @@ export default function BukuCreate() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        alert("Buku berhasil ditambahkan (simulasi).");
+        await fetch(`${API_BASE_URL}/detailPeminjaman/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(formData),
+    });
 
-        navigate("/buku");
+    alert("Peminjaman berhasil ditambahkan.");
+    navigate("/detailPeminjaman");
     };
+
+    useEffect(() => {
+        const fetchDatas = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/peminjaman/users`, {
+                headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+                },
+            });
+            
+            const data = await response.json();
+            setAllBuku(data);
+            setAllPeminjaman(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchDatas();
+    }, []);
 
     return (
         <div className="content-area py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
-                    <h2 className="page-title">Tambah Buku</h2>
+                    <h2 className="page-title">Tambah Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
                         <div className="mb-3">
-                            <label className="form-label">Judul Buku</label>
-                            <input 
-                                type="text" 
-                                name="judul" 
+                            <label className="form-label">Nama Peminjam</label>
+                            <select
+                                name="id_users"
                                 className="form-control"
-                                value={formData.judul}
+                                value={formData.id_users}
                                 onChange={handleChange}
-                                required 
-                            />
-                        </div>
+                                required>
 
-                        <div className="mb-3">
-                            <label className="form-label">Penulis</label>
-                            <input 
-                                type="text" 
-                                name="penulis" 
-                                className="form-control"
-                                value={formData.penulis}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Penerbit</label>
-                            <input 
-                                type="text" 
-                                name="penerbit"
-                                className="form-control"
-                                value={formData.penerbit}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Tahun Terbit</label>
-                            <input 
-                                type="number" 
-                                name="tahun_terbit"
-                                className="form-control"
-                                value={formData.tahun_terbit}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Kategori</label>
-                            <select 
-                                name="kategori" 
-                                className="form-control"
-                                value={formData.kategori}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">-- Pilih Kategori --</option>
-                                <option value="Fiksi">Fiksi</option>
-                                <option value="Non-Fiksi">Non-Fiksi</option>
-                                <option value="Referensi">Referensi</option>
-                                <option value="Lainnya">Lainnya</option>
+                                <option value="">-- Pilih Peminjam --</option>
+                                {allPeminjaman.map((peminjam) => (
+                                    <option key={peminjam.user.id_users} value={peminjam.user.id_users}>
+                                        {peminjam.user.nama} - {new Date(peminjam.tanggal_peminjaman).toLocaleDateString()}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Lokasi Buku</label>
-                            <input 
-                                type="text" 
-                                name="lokasi_buku"
+                            <label className="form-label">Buku yang dipinjam</label>
+                            <select
+                                name="id_buku"
                                 className="form-control"
-                                value={formData.lokasi_buku}
+                                value={formData.id_buku}
+                                onChange={handleChange}
+                                required>
+
+                                <option value="">-- Pilih Buku --</option>
+                                {allBuku.map((buku) => (
+                                    <option key={buku.id_buku} value={buku.id_buku}>
+                                        {buku.judul}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Jumlah Peminjaman</label>
+                            <input 
+                                type="number"
+                                name="jumlah" 
+                                className="form-control"
+                                value={formData.jumlah}
                                 onChange={handleChange}
                                 required 
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Denda</label>
+                            <input 
+                                type="float" 
+                                name="tanggal_pengembalian" 
+                                className="form-control"
+                                value={formData.tanggal_pengembalian}
+                                onChange={handleChange}
+                                readOnly
                             />
                         </div>
 
@@ -116,7 +131,7 @@ export default function BukuCreate() {
                             <button type="submit" className="btn btn-primary-tambah">
                                 Simpan
                             </button>
-                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/buku")}>
+                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/detailPeminjaman")}>
                                 Batal
                             </button>
                         </div>

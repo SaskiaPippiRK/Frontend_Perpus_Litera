@@ -5,15 +5,12 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function PeminjamanCreate() {
     const navigate = useNavigate();
-
     const [users, setAllUsers] = useState([]);
-
     const [formData, setFormData] = useState({
         id_users: '',
         tanggal_peminjaman: '',
         tanggal_pengembalian: '',
     });
-
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -24,7 +21,7 @@ export default function PeminjamanCreate() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await fetch(`${API_BASE_URL}/peminjaman/peminjaman`, {
+        await fetch(`${API_BASE_URL}/peminjaman/create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
