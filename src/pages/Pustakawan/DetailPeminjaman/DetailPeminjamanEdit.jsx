@@ -174,5 +174,5 @@ const DetailPeminjamanEdit = () => {
     )
 }
 
-export default PeminjamanEdit;
+export default DetailPeminjamanEdit;
 

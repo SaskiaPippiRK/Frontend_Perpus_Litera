@@ -11,8 +11,14 @@ import RegisterPage from "./pages/RegisterPage";
 import BukuIndexPustakawan from "./pages/Pustakawan/Buku/BukuIndex";
 import BukuCreatePustakawan from "./pages/Pustakawan/Buku/BukuCreate";
 import BukuEditPustakawan from "./pages/Pustakawan/Buku/BukuEdit";
+
 import PeminjamanIndex from "./pages/Pustakawan/Peminjaman/PeminjamanIndex";
+import PeminjamanEdit from "./pages/Pustakawan/Peminjaman/PeminjamanEdit";
+import PeminjamanCreate from "./pages/Pustakawan/Peminjaman/PeminjamanCreate";
+
 import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanIndex';
+import DetailPeminjamanEdit from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanEdit';
+import DetailPeminjamanCreate from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanCreate';
 
 
 function ProtectedRoute({ children, roles }) {
