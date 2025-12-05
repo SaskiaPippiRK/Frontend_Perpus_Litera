@@ -1,42 +1,41 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
-export default function BukuIndex() {
-    const navigate = useNavigate();
-    const [allBuku, setAllBuku] = useState([
-    {
-        id_buku: 1,
-        judul: "A",
-        penulis: "A",
-        penerbit: "A",
-        tahun_terbit: 2020,
-        kategori: "Fiksi",
-        lokasi_buku: "A1",
-    },
-    {
-        id_buku: 2,
-        judul: "B",
-        penulis: "B",
-        penerbit: "B",
-        tahun_terbit: 2021,
-        kategori: "Non-Fiksi",
-        lokasi_buku: "A2",
-    },]);
+const API_BASE_URL = 'http://localhost:8000/api';
 
-    const handleHapus = (id) => {
-        if(window.confirm("Apakah Anda Yakin?")) {
-            setAllBuku(allBuku.filter((buku) => buku.id_buku != id));
+export default function BukuIndexAnggota() {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [allBuku, setBuku] = useState([]);
+
+    const fetchBuku = async () => {
+        try 
+        {
+            const response = await axios.get(`${API_BASE_URL}/buku`);
+            setBuku(response.data);
+            setLoading(false);
+        } catch(err) 
+        {
+            setError("Gagal memuat data Buku dari API Laravel.");
+            setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchBuku();
+    }, []);
+
+    if (loading) return <div className="p-4 text-center">Memuat data buku...</div>;
+    if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="content-area py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
-                    <h2 className = "page-title">Buku ANGGOTA</h2>
+                    <h2 className = "page-title">Buku yang tersedia</h2>
 
-                    <button className="btn btn-primary-tambah" onClick={() => navigate("/buku/create")}>
-                        Tambah Buku
+                    <button className="btn btn-primary-tambah" onClick={() => fetchBuku()}>
+                        Refresh
                     </button>
 
                     <div className="table-responsive mt-3">
@@ -49,7 +48,6 @@ export default function BukuIndex() {
                                     <th className="text-center">Tahun Terbit</th>
                                     <th className="text-center">Kategori</th>
                                     <th className="text-center">Lokasi</th>
-                                    <th className="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,16 +59,6 @@ export default function BukuIndex() {
                                         <td className="text-center">{buku.tahun_terbit}</td>
                                         <td className="text-center">{buku.kategori}</td>
                                         <td className="text-center">{buku.lokasi_buku}</td>
-                                        <td className="text-center">
-                                            <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/buku/edit/${buku.id_buku}`)}>
-                                                    EDIT
-                                                </button>
-                                                <button className="btn btn-primary-danger" onClick={() => handleHapus(buku.id_buku)}>
-                                                    HAPUS
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                 ))}
                                 {allBuku.length === 0 && (

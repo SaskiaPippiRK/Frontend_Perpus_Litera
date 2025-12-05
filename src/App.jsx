@@ -23,6 +23,8 @@ import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjaman/DetailPem
 import DetailPeminjamanEdit from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanEdit';
 import DetailPeminjamanCreate from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanCreate';
 
+import LaporanIndex from './pages/Pustakawan/LaporanIndex';
+
 
 function ProtectedRoute({ children, roles }) {
     const token = localStorage.getItem("auth_token");
