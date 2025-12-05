@@ -122,7 +122,7 @@ function App()
                     {/* LAPORAN */}
                     <Route path="/pustakawan/laporan" element={
                         <ProtectedRoute roles={['pustakawan']}>
-                            <DetailPeminjamanEdit/>
+                            <LaporanIndex/>
                         </ProtectedRoute>
                     } />
 
