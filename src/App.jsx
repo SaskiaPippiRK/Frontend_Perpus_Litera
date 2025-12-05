@@ -7,6 +7,9 @@ import MainLayout from "./layouts/MainLayout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
+//Anggota
+import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
+
 //Pustakawan
 import BukuIndexPustakawan from "./pages/Pustakawan/Buku/BukuIndex";
 import BukuCreatePustakawan from "./pages/Pustakawan/Buku/BukuCreate";
