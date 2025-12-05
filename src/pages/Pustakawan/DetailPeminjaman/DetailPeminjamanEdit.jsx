@@ -1,138 +1,178 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; 
+import { useParams, useNavigate, Link } from 'react-router-dom';
 
-export default function BukuEdit() {
+const API_BASE_URL = 'http://localhost:8000/api'; 
+
+const DetailPeminjamanEdit = () => {
+    const { id } = useParams(); 
     const navigate = useNavigate();
-    const { id_buku } = useParams();
+    const [allBuku, setAllBuku] = useState([]);
+    const [allPeminjaman, setAllPeminjaman] = useState([]);
 
     const [formData, setFormData] = useState({
-        judul: "",
-        penulis: "",
-        penerbit: "",
-        tahun_terbit: "",
-        kategori: "",
-        lokasi_buku: "",
+        id_detailPeminjaman: '',
+        id_peminjaman: '',
+        id_buku: '',
+        jumlah: '',
+        status: '',
+        denda: '',
     });
 
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
-        const dataDummy = {
-            1: { judul: "A", penulis: "A", penerbit: "A", tahun_terbit: 2020, kategori: "Fiksi", lokasi_buku: "A1" },
-            2: { judul: "B", penulis: "B", penerbit: "B", tahun_terbit: 2021, kategori: "Non-Fiksi", lokasi_buku: "A2" }
+        const fetchDetailPeminjamanData = async () => {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`);
+                const detailPeminjaman = response.data.data ?? response.data;
+                
+                response = await axios.get(`${API_BASE_URL}/buku/${detailPeminjaman.id_buku}`);
+                const buku = response.data.data ?? response.data;
+                response = await axios.get(`${API_BASE_URL}/peminjaman/${detailPeminjaman.id_peminjaman}`);
+                const peminjaman = response.data.data ?? response.data;
+
+                setFormData({
+                    id_detailPeminjaman: detailPeminjaman.id_detailPeminjaman || "",
+                    id_peminjaman: peminjaman.id_peminjaman || "",
+                    id_buku: buku.id_buku || "",
+                    jumlah: detailPeminjaman.jumlah || "",
+                    status: detailPeminjaman.status || "",
+                    denda: detailPeminjaman.denda || "",
+                });
+                setLoading(false);
+            } catch(err)
+            {
+                console.error("Gagal memuat data detail Peminjaman: ", err);
+                setError("Gagal memuat data peminjaman. Pastikan ID Detail Peminjaman benar dan API berfungsi.");
+                setLoading(false);
+            }
         };
+        fetchDetailPeminjamanData();
+    }, [id]);
 
-        if (dataDummy[id_buku]) setFormData(dataDummy[id_buku]);
-    }, [id_buku]);
-
+    useEffect(() => {
+        const fetchDatas = async () => {
+            const response = await axios.get(`${API_BASE_URL}/peminjaman`);
+            setAllPeminjaman(response.data.data ?? response.data);
+            response = await axios.get(`${API_BASE_URL}/buku`);
+            setAllBuku(response.data.data ?? response.data);
+        };
+        fetchDatas();
+    }, []);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+        setFormData(prevData => ({ ...prevData, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert(`Data buku dengan ID ${id_buku} berhasil diubah (simulasi)`);
-        navigate("/buku");
+        setError(null);
+
+        try{
+            await axios.post(
+                `${API_BASE_URL}/detailPeminjaman/update/${id}`,
+                formData,
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            alert("Detail Data peminjaman berhasil diperbarui!");
+            navigate('/pustakawan/detailPeminjaman');
+        } catch(err) {
+            console.error("Gagal memperbarui detail peminjaman: ", err.response ? err.response.data : err.message);
+            const serverError = err.response?.data?.message || "Kesalahan koneksi atau validasi";
+            setError(`Gagal memperbarui peminjaman: ${serverError}`);
+        }
     };
+
+    if (loading) return <div className="p-4 text-center">Memuat data peminjaman...</div>;
+    if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="content-area py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
-                    <h2 className="page-title">Edit Buku</h2>
+                    <h2 className="page-title">Update Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
-
                         <div className="mb-3">
-                            <label className="form-label">Judul Buku</label>
-                            <input
-                                type="text"
-                                name="judul"
-                                className="form-control"
-                                value={formData.judul}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Penulis</label>
-                            <input
-                                type="text"
-                                name="penulis"
-                                className="form-control"
-                                value={formData.penulis}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Penerbit</label>
-                            <input
-                                type="text"
-                                name="penerbit"
-                                className="form-control"
-                                value={formData.penerbit}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Tahun Terbit</label>
-                            <input
-                                type="number"
-                                name="tahun_terbit"
-                                className="form-control"
-                                value={formData.tahun_terbit}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Kategori</label>
+                            <label className="form-label">Nama Peminjam</label>
                             <select
-                                name="kategori"
+                                name="id_users"
                                 className="form-control"
-                                value={formData.kategori}
+                                value={formData.id_users}
                                 onChange={handleChange}
-                                required
-                            >
-                                <option value="Fiksi">Fiksi</option>
-                                <option value="Non-Fiksi">Non-Fiksi</option>
-                                <option value="Referensi">Referensi</option>
-                                <option value="Lainnya">Lainnya</option>
+                                required>
+
+                                <option value="">-- Pilih Peminjam --</option>
+                                {allPeminjaman.map((peminjam) => (
+                                    <option key={peminjam.user.id_users} value={peminjam.user.id_users}>
+                                        {peminjam.user.nama} - {new Date(peminjam.tanggal_peminjaman).toLocaleDateString()}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Lokasi Buku</label>
-                            <input
-                                type="text"
-                                name="lokasi_buku"
+                            <label className="form-label">Buku yang dipinjam</label>
+                            <select
+                                name="id_buku"
                                 className="form-control"
-                                value={formData.lokasi_buku}
+                                value={formData.id_buku}
                                 onChange={handleChange}
-                                required
+                                required>
+
+                                <option value="">-- Pilih Buku --</option>
+                                {allBuku.map((buku) => (
+                                    <option key={buku.id_buku} value={buku.id_buku}>
+                                        {buku.judul}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Jumlah Peminjaman</label>
+                            <input 
+                                type="number"
+                                name="jumlah" 
+                                className="form-control"
+                                value={formData.jumlah}
+                                onChange={handleChange}
+                                required 
                             />
                         </div>
 
-                        <div className="d-flex gap-2">
-                            <button type="submit" className="btn btn-primary-edit">
-                                Update
+                        <div className="mb-3">
+                            <label className="form-label">Denda</label>
+                            <input 
+                                type="float" 
+                                name="tanggal_pengembalian" 
+                                className="form-control"
+                                value={formData.tanggal_pengembalian}
+                                onChange={handleChange}
+                                readOnly
+                            />
+                        </div>
+
+                        <div className="button-group">
+                            <button type="submit" className="btn btn-primary-tambah">
+                                Simpan
                             </button>
-                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/buku")}>
-                                Batal
-                            </button>
+                        
+                            <Link to={`/pustakawan/peminjaman/`} className="btn btn-secondary">
+                                <i ></i> BATAL
+                            </Link>
                         </div>
 
                     </form>
                 </div>
             </div>
         </div>
-    );
+    )
 }
+
+export default DetailPeminjamanEdit;
+
