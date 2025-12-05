@@ -6,6 +6,8 @@ import iconPeminjamanNormal from "../assets/img/iconBukuSaya/Peminjaman_Normal.p
 import iconPeminjamanSelected from "../assets/img/iconBukuSaya/Peminjaman_Selected.png";
 import iconDetailNormal from "../assets/img/iconBukuSaya/DetailPeminjaman_Normal.png";
 import iconDetailSelected from "../assets/img/iconBukuSaya/DetailPeminjaman_Selected.png";
+import iconLaporanNormal from "../assets/img/iconBukuSaya/Laporan_Normal.png";
+import iconLaporanSelected from "../assets/img/iconBukuSaya/Laporan_Selected.png";
 
 export default function Sidebar() {
     const location = useLocation();
@@ -30,6 +32,12 @@ export default function Sidebar() {
             label: "Detail",
             normal: iconDetailNormal,
             active: iconDetailSelected,
+        },
+        {
+            path: "/pustakawan/laporan",
+            label: "Laporan",
+            normal: iconLaporanNormal,
+            active: iconLaporanSelected,
         }
     ];
 

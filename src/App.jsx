@@ -17,6 +17,7 @@ import PeminjamanEdit from "./pages/Pustakawan/Peminjaman/PeminjamanEdit";
 import DetailPeminjamanCreate from "./pages/Pustakawan/DetailPeminjaman/DetailPeminjamanCreate";
 import DetailPeminjamanIndex from "./pages/Pustakawan/DetailPeminjaman/DetailPeminjamanIndex";
 import DetailPeminjamanEdit from "./pages/Pustakawan/DetailPeminjaman/DetailPeminjamanEdit";
+import LaporanIndex from "./pages/Pustakawan/LaporanIndex";
 
 //Anggota
 import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
@@ -113,6 +114,13 @@ function App()
                     } />
 
                     <Route path="/pustakawan/detailPeminjaman/edit" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <DetailPeminjamanEdit/>
+                        </ProtectedRoute>
+                    } />
+
+                    {/* LAPORAN */}
+                    <Route path="/pustakawan/laporan" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <DetailPeminjamanEdit/>
                         </ProtectedRoute>
