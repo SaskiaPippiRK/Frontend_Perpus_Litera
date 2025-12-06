@@ -23,7 +23,7 @@ import DetailPeminjamanIndex from './pages/Pustakawan/DetailPeminjaman/DetailPem
 import DetailPeminjamanEdit from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanEdit';
 import DetailPeminjamanCreate from './pages/Pustakawan/DetailPeminjaman/DetailPeminjamanCreate';
 
-import LaporanIndex from './pages/Pustakawan/LaporanIndex';
+import LaporanIndex from './pages/Laporan/LaporanIndex';
 
 
 function ProtectedRoute({ children, roles }) {
