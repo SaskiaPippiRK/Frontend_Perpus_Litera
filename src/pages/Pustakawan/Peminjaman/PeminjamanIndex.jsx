@@ -11,15 +11,35 @@ export default function PeminjamanIndex() {
     const [allPeminjaman, setAllPeminjaman] = useState([]);
 
     const fetchPeminjaman = async () => {
-        try  {
-            const response = await axios.get(`${API_BASE_URL}/peminjaman`);
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("auth_token");
+            
+            const response = await axios.get(`${API_BASE_URL}/peminjaman`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            
             setAllPeminjaman(response.data);
-            setLoading(false);
-        } catch(err)  {
-            setError("Gagal memuat data Peminjaman dari API Laravel.");
+            setError(null);
+        } catch(err) {
+            console.error("Error fetching peminjaman:", err);
+        if (err.response?.status === 401) {
+                setError("Sesi telah berakhir. Silakan login kembali.");
+            } else if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError("Gagal memuat data peminjaman. Silakan coba lagi.");
+            }
+        } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchPeminjaman();
+    }, []);
 
     const handleDelete = async(id) => {
         if(window.confirm("Apakah Anda yakin ingin menghapus data peminjaman ini?")) {
@@ -38,32 +58,13 @@ export default function PeminjamanIndex() {
     if(loading) return <div className="p-4 text-center">Memuat data...</div>;
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
-    useEffect(() => {
-        const fetchPeminjaman = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman`, {
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("token")
-                    }
-                });
-
-                const data = await response.json();
-                setAllPeminjaman(data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchPeminjaman();
-    }, []);
-
     return (
         <div className="content-area py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
                     <h2 className = "page-title">Peminjaman</h2>
 
-                    <button className="btn btn-primary-tambah" onClick={() => navigate("/peminjaman/create")}>
+                    <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/peminjaman/create")}>
                         Tambah Peminjaman
                     </button>
 
@@ -89,7 +90,7 @@ export default function PeminjamanIndex() {
                                         
                                         <td className="text-center">
                                             <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/peminjaman/edit/${peminjaman.id_peminjaman}`)}>
+                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/pustakawan/peminjaman/edit/${peminjaman.id_peminjaman}`)}>
                                                     EDIT
                                                 </button>
                                                 <button className="btn btn-primary-danger" onClick={() => handleDelete(peminjaman.id_peminjaman)}>
@@ -101,7 +102,7 @@ export default function PeminjamanIndex() {
                                 ))}
                                 {allPeminjaman.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="text-center">
+                                    <td colSpan={5} className="text-center">
                                     Tidak ada data Peminjaman
                                     </td>
                                 </tr>

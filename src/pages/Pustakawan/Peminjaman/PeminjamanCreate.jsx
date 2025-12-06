@@ -5,7 +5,7 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function PeminjamanCreate() {
     const navigate = useNavigate();
-    const [users, setAllUsers] = useState([]);
+    const [anggota, setAnggota] = useState([]);
     const [formData, setFormData] = useState({
         id_users: '',
         tanggal_peminjaman: '',
@@ -31,27 +31,42 @@ export default function PeminjamanCreate() {
     });
 
     alert("Peminjaman berhasil ditambahkan.");
-    navigate("/peminjaman");
+    navigate("/pustakawan/peminjaman");
     };
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman/users`, {
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/users`, {
                 headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                    Authorization: "Bearer " + localStorage.getItem("token"),
                 },
             });
-            
-            const data = await response.json();
-            setAllUsers(data);
-            } catch (err) {
-                console.error(err);
-            }
-        };
 
-        fetchUsers();
-    }, []);
+            const data = await response.json();
+
+            const anggota = data.filter(user => user.role === "anggota");
+            setAnggota(anggota);
+
+            if (!formData.tanggal_peminjaman) return;
+            const borrowDate = new Date(formData.tanggal_peminjaman);
+            const returnDate = new Date(borrowDate);
+            returnDate.setDate(returnDate.getDate() + 7);
+            
+            const formattedReturnDate = returnDate.toISOString().split('T')[0];
+            
+            setFormData(prev => ({
+                ...prev,
+                tanggal_pengembalian: formattedReturnDate
+            }));
+
+        } catch (err) {
+            console.error("Gagal mendapatkan data peminjam:", err);
+        }
+    };
+
+    fetchUsers();
+    }, [formData.tanggal_peminjaman]);
 
     return (
         <div className="content-area py-4">
@@ -71,7 +86,7 @@ export default function PeminjamanCreate() {
 
                                 <option value="">-- Pilih Peminjam --</option>
 
-                                {users.map((user) => (
+                                {anggota.map((user) => (
                                     <option key={user.id_users} value={user.id_users}>
                                         {user.nama}
                                     </option>
@@ -99,7 +114,8 @@ export default function PeminjamanCreate() {
                                 className="form-control"
                                 value={formData.tanggal_pengembalian}
                                 onChange={handleChange}
-                                required 
+                                required
+                                readOnly 
                             />
                         </div>
 
@@ -107,7 +123,7 @@ export default function PeminjamanCreate() {
                             <button type="submit" className="btn btn-primary-tambah">
                                 Simpan
                             </button>
-                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/peminjaman")}>
+                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/pustakawan/peminjaman")}>
                                 Batal
                             </button>
                         </div>
