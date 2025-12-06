@@ -19,53 +19,70 @@ export default function PeminjamanCreate() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        await fetch(`${API_BASE_URL}/peminjaman/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token"),
-            },
-            body: JSON.stringify(formData),
-    });
-
-    alert("Peminjaman berhasil ditambahkan.");
-    navigate("/pustakawan/peminjaman");
-    };
-
-    useEffect(() => {
-    const fetchUsers = async () => {
+    e.preventDefault();
+    
         try {
-            const response = await fetch(`${API_BASE_URL}/users`, {
+            const response = await fetch(`${API_BASE_URL}/peminjaman/create`, {
+                method: "POST",
                 headers: {
-                    Authorization: "Bearer " + localStorage.getItem("token"),
-                },
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("token"),
+                    },
+                body: JSON.stringify(formData),
             });
 
-            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            const anggota = data.filter(user => user.role === "anggota");
-            setAnggota(anggota);
-
-            if (!formData.tanggal_peminjaman) return;
-            const borrowDate = new Date(formData.tanggal_peminjaman);
-            const returnDate = new Date(borrowDate);
-            returnDate.setDate(returnDate.getDate() + 7);
+            const result = await response.json();
+            console.log("Response:", result);
             
-            const formattedReturnDate = returnDate.toISOString().split('T')[0];
-            
-            setFormData(prev => ({
-                ...prev,
-                tanggal_pengembalian: formattedReturnDate
-            }));
-
-        } catch (err) {
-            console.error("Gagal mendapatkan data peminjam:", err);
+            alert("Peminjaman berhasil ditambahkan.");
+            navigate("/pustakawan/peminjaman");
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            alert("Gagal menambahkan peminjaman. Silakan coba lagi.");
         }
     };
 
-    fetchUsers();
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+
+                const data = await response.json();
+                const anggota = data.filter(user => user.role === "anggota");
+                setAnggota(anggota);
+            } catch (err) {
+                console.error("Gagal mendapatkan data peminjam:", err);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    useEffect(() => {
+        if (!formData.tanggal_peminjaman) return;
+        
+        const borrowDate = new Date(formData.tanggal_peminjaman);
+        const returnDate = new Date(borrowDate);
+        returnDate.setDate(returnDate.getDate() + 7);
+        
+        const formattedReturnDate = returnDate.toISOString().split('T')[0];
+        
+        setFormData(prev => ({
+            ...prev,
+            tanggal_pengembalian: formattedReturnDate
+        }));
     }, [formData.tanggal_peminjaman]);
 
     return (
