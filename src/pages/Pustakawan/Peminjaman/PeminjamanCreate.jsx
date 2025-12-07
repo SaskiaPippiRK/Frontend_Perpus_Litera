@@ -25,9 +25,9 @@ export default function PeminjamanCreate() {
             const response = await fetch(`${API_BASE_URL}/peminjaman/create`, {
                 method: "POST",
                 headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + localStorage.getItem("token"),
-                    },
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("auth_token"),
+                },
                 body: JSON.stringify(formData),
             });
 
