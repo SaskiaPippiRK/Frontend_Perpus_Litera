@@ -5,7 +5,7 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function PeminjamanCreate() {
     const navigate = useNavigate();
-    const [users, setAllUsers] = useState([]);
+    const [anggota, setAnggota] = useState([]);
     const [formData, setFormData] = useState({
         id_users: '',
         tanggal_peminjaman: '',
@@ -19,39 +19,71 @@ export default function PeminjamanCreate() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
+    
+        try {
+            const response = await fetch(`${API_BASE_URL}/peminjaman/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("auth_token"),
+                },
+                body: JSON.stringify(formData),
+            });
 
-        await fetch(`${API_BASE_URL}/peminjaman/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token"),
-            },
-            body: JSON.stringify(formData),
-    });
+            if (!response.ok) {
+                throw new Error(`Gagal menyimpan: ${response.status}`);
+            }
 
-    alert("Peminjaman berhasil ditambahkan.");
-    navigate("/peminjaman");
+            const result = await response.json();
+            console.log("Response:", result);
+            
+            alert("Peminjaman berhasil ditambahkan.");
+            navigate("/pustakawan/peminjaman");
+        } catch (error) {
+            console.error("Gagal menyimpan data:", error);
+            alert("Gagal menambahkan peminjaman. Silakan coba lagi.");
+        }
     };
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman/users`, {
-                headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-            });
-            
-            const data = await response.json();
-            setAllUsers(data);
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token"),
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Gagal mendapatkan data anggota');
+                }
+
+                const data = await response.json();
+                const anggota = data.filter(user => user.role === "anggota");
+                setAnggota(anggota);
             } catch (err) {
-                console.error(err);
+                console.error("Gagal mendapatkan data anggota:", err);
             }
         };
 
         fetchUsers();
     }, []);
+
+    useEffect(() => {
+        if (!formData.tanggal_peminjaman) return;
+        
+        const tanggal_peminjaman_raw = new Date(formData.tanggal_peminjaman);
+        const tanggal_pengembalian_raw = new Date(tanggal_peminjaman_raw);
+        tanggal_pengembalian_raw.setDate(tanggal_pengembalian_raw.getDate() + 7);
+        
+        const tanggal_pengembalian_string = tanggal_pengembalian_raw.toISOString().split('T')[0];
+        
+        setFormData(prev => ({
+            ...prev,
+            tanggal_pengembalian: tanggal_pengembalian_string
+        }));
+    }, [formData.tanggal_peminjaman]);
 
     return (
         <div className="content-area py-4">
@@ -71,7 +103,7 @@ export default function PeminjamanCreate() {
 
                                 <option value="">-- Pilih Peminjam --</option>
 
-                                {users.map((user) => (
+                                {anggota.map((user) => (
                                     <option key={user.id_users} value={user.id_users}>
                                         {user.nama}
                                     </option>
@@ -99,7 +131,8 @@ export default function PeminjamanCreate() {
                                 className="form-control"
                                 value={formData.tanggal_pengembalian}
                                 onChange={handleChange}
-                                required 
+                                required
+                                readOnly 
                             />
                         </div>
 
@@ -107,7 +140,7 @@ export default function PeminjamanCreate() {
                             <button type="submit" className="btn btn-primary-tambah">
                                 Simpan
                             </button>
-                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/peminjaman")}>
+                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/pustakawan/peminjaman")}>
                                 Batal
                             </button>
                         </div>

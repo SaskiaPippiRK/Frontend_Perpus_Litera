@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -11,7 +12,11 @@ export default function DetailPeminjamanIndex() {
 
     const fetchDetailPeminjaman = async () => {
         try  {
-            const response = await axios.get(`${API_BASE_URL}/detailPeminjaman`);
+            const response = await axios.get(`${API_BASE_URL}/detailPeminjaman`, {
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("auth_token")
+                }
+            });
             setAllDetailPeminjaman(response.data);
             setLoading(false);
         } catch(err)  {
@@ -23,9 +28,12 @@ export default function DetailPeminjamanIndex() {
     const handleDelete = async(id) => {
         if(window.confirm("Apakah Anda yakin ingin menghapus data peminjaman ini?")) {
             try {
-                await axios.delete(`${API_BASE_URL}/detailPeminjaman/delete/${id}`);
+                await axios.delete(`${API_BASE_URL}/detailPeminjaman/delete/${id}`, {
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("auth_token")
+                    }
+                });
                 alert("Detail Peminjaman berhasil dihapus!");
-
                 fetchDetailPeminjaman();
             } catch(err) {
                 console.error("Gagal menghapus detail peminjaman: ", err);
@@ -33,28 +41,13 @@ export default function DetailPeminjamanIndex() {
             }
         }
     };
+    
+        useEffect(() => {
+            fetchDetailPeminjaman();
+        }, []);
 
     if(loading) return <div className="p-4 text-center">Memuat data...</div>;
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
-
-    useEffect(() => {
-        const fetchPeminjaman = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman`, {
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("token")
-                    }
-                });
-
-                const data = await response.json();
-                setAllPeminjaman(data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchPeminjaman();
-    }, []);
 
     return (
         <div className="content-area py-4">
@@ -62,7 +55,7 @@ export default function DetailPeminjamanIndex() {
                 <div className = "card shadow-lg rounded-4 content-card p-4">
                     <h2 className = "page-title">Detail Peminjaman</h2>
 
-                    <button className="btn btn-primary-tambah" onClick={() => navigate("/detailPeminjaman/create")}>
+                    <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/detailPeminjaman/create")}>
                         Tambah Peminjaman
                     </button>
 
@@ -82,15 +75,16 @@ export default function DetailPeminjamanIndex() {
                             <tbody>
                                 {allDetailPeminjaman.map((detailPeminjaman) => (
                                     <tr key={detailPeminjaman.id_detail}>
-                                        <td className="text-center">{detailPeminjaman.detailPeminjaman}</td>
+                                        <td className="text-center">{detailPeminjaman.id_detail}</td>
                                         <td className="text-center">{detailPeminjaman.peminjaman.user ? detailPeminjaman.peminjaman.user.nama : "-"}</td>
                                         <td className="text-center">{detailPeminjaman.buku ? detailPeminjaman.buku.judul : "-"}</td>
+                                        <td className="text-center">{detailPeminjaman.jumlah}</td>
                                         <td className="text-center">{detailPeminjaman.status}</td>
                                         <td className="text-center">{detailPeminjaman.denda}</td>
                                         
                                         <td className="text-center">
                                             <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/peminjaman/edit/${detailPeminjaman.id_detail}`)}>
+                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/pustakawan/detailPeminjaman/edit/${detailPeminjaman.id_detail}`)}>
                                                     EDIT
                                                 </button>
                                                 <button className="btn btn-primary-danger" onClick={() => handleDelete(detailPeminjaman.id_detail)}>

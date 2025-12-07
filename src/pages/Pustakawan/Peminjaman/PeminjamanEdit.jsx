@@ -8,8 +8,7 @@ const PeminjamanEdit = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
 
-    const [users, setUsers] = useState([]);
-
+    const [currentUser, setCurrentUser] = useState(null);
     const [formData, setFormData] = useState({
         id_users: '',
         tanggal_peminjaman: '',
@@ -22,33 +21,36 @@ const PeminjamanEdit = () => {
     useEffect(() => {
         const fetchPeminjamanData = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/peminjaman/${id}`);
+                const token = localStorage.getItem("auth_token");
+                
+                const response = await axios.get(`${API_BASE_URL}/peminjaman/${id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
 
-                const data = response.data.data ?? response.data;
-
+                const data = response.data;
+                
                 setFormData({
                     id_users: data.id_users || "",
                     tanggal_peminjaman: data.tanggal_peminjaman?.slice(0, 10) || "",
                     tanggal_pengembalian: data.tanggal_pengembalian?.slice(0, 10) || "",
                 });
+
+                if (data.user) {
+                    setCurrentUser(data.user);
+                }
+
                 setLoading(false);
-            } catch(err)
-            {
+            } catch(err) {
                 console.error("Gagal memuat data Edit Peminjaman: ", err);
-                setError("Gagal memuat data peminjaman. Pastikan ID Peminjaman benar dan API berfungsi.");
+                setError("Gagal memuat data peminjaman.");
                 setLoading(false);
             }
         };
+
         fetchPeminjamanData();
     }, [id]);
-
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const response = await axios.get(`${API_BASE_URL}/users`);
-            setUsers(response.data.data ?? response.data);
-        };
-        fetchUsers();
-    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -60,18 +62,23 @@ const PeminjamanEdit = () => {
         setError(null);
 
         try{
+            const token = localStorage.getItem("auth_token");
             await axios.post(
                 `${API_BASE_URL}/peminjaman/update/${id}`,
                 formData,
-                { headers: { "Content-Type": "application/json" } }
+                { 
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    } 
+                }
             );
 
             alert("Peminjaman berhasil diperbarui!");
             navigate('/pustakawan/peminjaman');
         } catch(err) {
-            console.error("Gagal memperbarui peminjaman: ", err.response ? err.response.data : err.message);
-            const serverError = err.response?.data?.message || "Kesalahan koneksi atau validasi";
-            setError(`Gagal memperbarui peminjaman: ${serverError}`);
+            console.error("Gagal memperbarui peminjaman: ", err);
+            setError("Gagal memperbarui peminjaman.");
         }
     };
 
@@ -87,21 +94,11 @@ const PeminjamanEdit = () => {
                     <form onSubmit={handleSubmit} className="mt-3">
                         <div className="mb-3">
                             <label className="form-label">Nama Peminjam</label>
-                            <select
-                                name="id_users"
-                                className="form-control"
-                                value={formData.id_users}
-                                onChange={handleChange}
-                                required>
-
-                                <option value="">-- Pilih Peminjam --</option>
-
-                                {users.map((user) => (
-                                    <option key={user.id_users} value={user.id_users}>
-                                        {user.nama}
-                                    </option>
-                                ))}
-                            </select>
+                            <input
+                                type='text' 
+                                className='form-control' 
+                                value={currentUser ? currentUser.nama : "Loading..."} 
+                                readOnly></input>
                         </div>
 
                         <div className="mb-3">
@@ -113,6 +110,7 @@ const PeminjamanEdit = () => {
                                 value={formData.tanggal_peminjaman}
                                 onChange={handleChange}
                                 required 
+                                readOnly
                             />
                         </div>
 

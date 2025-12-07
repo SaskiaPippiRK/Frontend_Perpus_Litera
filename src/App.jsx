@@ -93,7 +93,7 @@ function App()
                         </ProtectedRoute>
                     } />
 
-                    <Route path="/pustakawan/peminjaman/edit" element={
+                    <Route path="/pustakawan/peminjaman/edit/:id" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <PeminjamanEdit/>
                         </ProtectedRoute>
@@ -113,7 +113,7 @@ function App()
                         </ProtectedRoute>
                     } />
 
-                    <Route path="/pustakawan/detailPeminjaman/edit" element={
+                    <Route path="/pustakawan/detailPeminjaman/edit/:id" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <DetailPeminjamanEdit/>
                         </ProtectedRoute>
