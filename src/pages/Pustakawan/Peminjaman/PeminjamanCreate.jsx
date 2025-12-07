@@ -32,7 +32,7 @@ export default function PeminjamanCreate() {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`Gagal menyimpan: ${response.status}`);
             }
 
             const result = await response.json();
@@ -56,14 +56,14 @@ export default function PeminjamanCreate() {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch users');
+                    throw new Error('Gagal mendapatkan data anggota');
                 }
 
                 const data = await response.json();
                 const anggota = data.filter(user => user.role === "anggota");
                 setAnggota(anggota);
             } catch (err) {
-                console.error("Gagal mendapatkan data peminjam:", err);
+                console.error("Gagal mendapatkan data anggota:", err);
             }
         };
 
@@ -73,15 +73,15 @@ export default function PeminjamanCreate() {
     useEffect(() => {
         if (!formData.tanggal_peminjaman) return;
         
-        const borrowDate = new Date(formData.tanggal_peminjaman);
-        const returnDate = new Date(borrowDate);
-        returnDate.setDate(returnDate.getDate() + 7);
+        const tanggal_peminjaman_raw = new Date(formData.tanggal_peminjaman);
+        const tanggal_pengembalian_raw = new Date(tanggal_peminjaman_raw);
+        tanggal_pengembalian_raw.setDate(tanggal_pengembalian_raw.getDate() + 7);
         
-        const formattedReturnDate = returnDate.toISOString().split('T')[0];
+        const tanggal_pengembalian_string = tanggal_pengembalian_raw.toISOString().split('T')[0];
         
         setFormData(prev => ({
             ...prev,
-            tanggal_pengembalian: formattedReturnDate
+            tanggal_pengembalian: tanggal_pengembalian_string
         }));
     }, [formData.tanggal_peminjaman]);
 
