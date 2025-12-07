@@ -9,7 +9,6 @@ const PeminjamanEdit = () => {
     const navigate = useNavigate();
 
     const [currentUser, setCurrentUser] = useState(null);
-    const [allAnggota, setAllAnggota] = useState([]);
     const [formData, setFormData] = useState({
         id_users: '',
         tanggal_peminjaman: '',

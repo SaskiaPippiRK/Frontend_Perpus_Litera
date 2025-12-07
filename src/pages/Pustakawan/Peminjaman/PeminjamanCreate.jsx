@@ -41,7 +41,7 @@ export default function PeminjamanCreate() {
             alert("Peminjaman berhasil ditambahkan.");
             navigate("/pustakawan/peminjaman");
         } catch (error) {
-            console.error("Error submitting data:", error);
+            console.error("Gagal menyimpan data:", error);
             alert("Gagal menambahkan peminjaman. Silakan coba lagi.");
         }
     };

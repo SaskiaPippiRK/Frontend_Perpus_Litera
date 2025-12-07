@@ -84,7 +84,7 @@ export default function DetailPeminjamanIndex() {
                                         
                                         <td className="text-center">
                                             <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/detailPeminjaman/edit/${detailPeminjaman.id_detail}`)}>
+                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/pustakawan/detailPeminjaman/edit/${detailPeminjaman.id_detail}`)}>
                                                     EDIT
                                                 </button>
                                                 <button className="btn btn-primary-danger" onClick={() => handleDelete(detailPeminjaman.id_detail)}>
