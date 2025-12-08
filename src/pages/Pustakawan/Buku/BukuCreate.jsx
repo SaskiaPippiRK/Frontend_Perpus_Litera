@@ -10,7 +10,7 @@ const BukuCreate = () => {
     };
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrapper py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
                     <h2 className="page-title">Tambah Buku</h2>
