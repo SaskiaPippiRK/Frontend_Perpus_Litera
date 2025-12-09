@@ -9,7 +9,7 @@ import RegisterPage from "./pages/RegisterPage";
 
 //Anggota
 import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
-
+import AnggotaPeminjamanIndex from "./pages/Anggota/BukuIndex";
 //Pustakawan
 import BukuIndexPustakawan from "./pages/Pustakawan/Buku/BukuIndex";
 import BukuCreatePustakawan from "./pages/Pustakawan/Buku/BukuCreate";
@@ -146,6 +146,13 @@ function App()
                             <BukuIndexAnggota/>
                         </ProtectedRoute>
                     } />
+
+                    <Route path="/anggota/peminjaman" element={
+                        <ProtectedRoute roles={['anggota']}>
+                            <AnggotaPeminjamanIndex/>
+                        </ProtectedRoute>
+                    } />
+
                 </Route>
             </Routes>
         </BrowserRouter>

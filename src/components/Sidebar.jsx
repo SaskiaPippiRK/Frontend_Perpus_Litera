@@ -18,7 +18,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     const menuPustakawan = [
         {
             path: "/pustakawan/buku",
-            label: "Kelola Buku",
+            label: "Buku Tersedia",
             normal: iconBukuNormal,
             active: iconBukuSelected,
         },
@@ -48,7 +48,15 @@ export default function Sidebar({ collapsed, setCollapsed }) {
             label: "Daftar Buku",
             normal: iconBukuNormal,
             active: iconBukuSelected,
+        },
+       
+        {
+            path: "/anggota/peminjaman", 
+            label: "Buku yang Dipinjam", 
+            normal: iconPeminjamanNormal, 
+            active: iconPeminjamanSelected,
         }
+       
     ];
 
     const handleLogout = () => {
@@ -76,7 +84,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                         <img src={active ? item.active : item.normal} className="icon-img" />
                     </div>
 
-                    {!collapsed && (<span className="btn-text">{item.label}</span>)}                    
+                    {!collapsed && (<span className="btn-text">{item.label}</span>)}                
                 </Link>
             );
         })}
