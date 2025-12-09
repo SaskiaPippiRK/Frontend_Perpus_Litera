@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -8,22 +9,46 @@ export default function DetailPeminjamanIndex() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [allDetailPeminjaman, setAllDetailPeminjaman] = useState([]);
+    const [idPeminjaman, setIdPeminjaman] = useState("");
 
     const fetchDetailPeminjaman = async () => {
         try  {
-            const response = await axios.get(`${API_BASE_URL}/detailPeminjaman`);
+            setLoading(true);
+
+            const token = localStorage.getItem("auth_token");
+            const response = await axios.get(`${API_BASE_URL}/detailPeminjaman/peminjaman/${idPeminjaman}`, {
+                headers : {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
             setAllDetailPeminjaman(response.data);
-            setLoading(false);
+            setError(null);
         } catch(err)  {
-            setError("Gagal memuat detail data Peminjaman dari API Laravel.");
+            console.error(err);
+            if(err.response?.status === 404)
+            {
+                setError("Detail Peminjaman tidak ditemukan");
+            } else if(err.response?.data?.message)
+            {
+                setError(err.response.data.message);
+            } else{
+                setError("Gagal memuat detail data Peminjaman dari API Laravel.");
+            }
+            setAllDetailPeminjaman([]);
+        } finally{
             setLoading(false);
         }
     };
 
     const handleDelete = async(id) => {
+        const token = localStorage.getItem("auth_token");
         if(window.confirm("Apakah Anda yakin ingin menghapus data peminjaman ini?")) {
             try {
-                await axios.delete(`${API_BASE_URL}/detailPeminjaman/delete/${id}`);
+                await axios.delete(`${API_BASE_URL}/detailPeminjaman/delete/${id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
                 alert("Detail Peminjaman berhasil dihapus!");
 
                 fetchDetailPeminjaman();
@@ -38,77 +63,84 @@ export default function DetailPeminjamanIndex() {
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     useEffect(() => {
-        const fetchPeminjaman = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman`, {
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("token")
-                    }
-                });
+        // const fetchPeminjaman = async () => {
+        //     try {
+        //         const response = await fetch(`${API_BASE_URL}/peminjaman`, {
+        //             headers: {
+        //                 "Authorization": "Bearer " + localStorage.getItem("token")
+        //             }
+        //         });
 
-                const data = await response.json();
-                setAllPeminjaman(data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
+        //         const data = await response.json();
+        //         setAllPeminjaman(data);
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // };
 
-        fetchPeminjaman();
+        fetchDetailPeminjaman();
     }, []);
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
                     <h2 className = "page-title">Detail Peminjaman</h2>
 
-                    <button className="btn btn-primary-tambah" onClick={() => navigate("/detailPeminjaman/create")}>
-                        Tambah Peminjaman
-                    </button>
+                    <div className="d-flex gap-2 mb-3">
+                        <input type="text" className="form-control" placeholder="Masukkan ID Peminjaman" value={idPeminjaman} onChange={(e) => setIdPeminjaman(e.target.value)} />
+                        <button className="btn btn-primary" onClick={fetchDetailPeminjaman}>Cari</button>
+                        <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/detailPeminjaman/create")}>
+                            Tambah Peminjaman
+                        </button>
+                    </div>
 
-                    <div className="table-responsive mt-3">
-                        <table className="table-border">
-                            <thead className="table-primary">
-                                <tr>
-                                    <th className="text-center">ID</th>
-                                    <th className="text-center">Nama Peminjam</th>
-                                    <th className="text-center">Judul Buku</th>
-                                    <th className="text-center">Jumlah</th>
-                                    <th className="text-center">Status</th>
-                                    <th className="text-center">Denda</th>
-                                    <th className="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {allDetailPeminjaman.map((detailPeminjaman) => (
-                                    <tr key={detailPeminjaman.id_detail}>
-                                        <td className="text-center">{detailPeminjaman.detailPeminjaman}</td>
-                                        <td className="text-center">{detailPeminjaman.peminjaman.user ? detailPeminjaman.peminjaman.user.nama : "-"}</td>
-                                        <td className="text-center">{detailPeminjaman.buku ? detailPeminjaman.buku.judul : "-"}</td>
-                                        <td className="text-center">{detailPeminjaman.status}</td>
-                                        <td className="text-center">{detailPeminjaman.denda}</td>
-                                        
-                                        <td className="text-center">
-                                            <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/peminjaman/edit/${detailPeminjaman.id_detail}`)}>
-                                                    EDIT
-                                                </button>
-                                                <button className="btn btn-primary-danger" onClick={() => handleDelete(detailPeminjaman.id_detail)}>
-                                                    HAPUS
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {allDetailPeminjaman.length === 0 && (
-                                <tr>
-                                    <td colSpan={7} className="text-center">
-                                    Tidak ada data Peminjaman
-                                    </td>
-                                </tr>
-                                )}
-                            </tbody>
-                        </table>
+                    <div className="row mt-4">
+                        {allDetailPeminjaman.map((item) => (
+                            <div key={item.id_detail} className="col-12 col-sm-6 col-lg-4 mb-4">
+                                <div className="card shadow-sm h-100 rounded-4 border-1 p-3">
+                                    <h5 className="fw-bold mb-2">{item.peminjaman?.user?.nama ?? "-"}</h5>
+                                </div>
+
+                                <div className="text-muted small mb-1">
+                                    ID: {item.id_detail}
+                                </div>
+
+                                <div className="text-muted small mb-1">
+                                    Judul: {item.buku ? item.buku?.judul: "-"}
+                                </div>
+
+                                <div className="text-muted small mb-1">
+                                    Status: {item.status}
+                                </div>
+
+                                <div className="text-muted small mb-1">
+                                    Denda: Rp {item.denda},00
+                                </div>
+
+                                <div className="d-flex gap-2 mt-auto">
+                                    <Link 
+                                        to={`/pustakawan/detailPeminjaman/edit/${item.id_detail}`} 
+                                        className="btn btn-primary-edit w-50"
+                                    >
+                                        EDIT
+                                    </Link>
+
+                                    <button 
+                                        onClick={() => handleDelete(item.id_detail)} 
+                                        className="btn btn-primary-danger w-50"
+                                    >
+                                        HAPUS
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+
+                        {allDetailPeminjaman.length == 0 && (
+                            <div className="col-12 text-center text-muted py-5">
+                                Tidak ada data buku
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

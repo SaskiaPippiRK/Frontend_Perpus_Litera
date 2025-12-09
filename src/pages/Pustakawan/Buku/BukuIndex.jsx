@@ -59,7 +59,7 @@ const BukuIndex = () => {
                     
                     <div className="row mt-4">
                         {buku.map((item) => (
-                            <div key={item.id_buku} className="col-12 col-sm-6 col-md-4 mb-4">
+                            <div key={item.id_buku} className="col-12 col-sm-6 col-lg-4 mb-4">
                                 <div className="card shadow-sm h-100 rounded-4 border-1 p-3">
 
                                     <h5 className="fw-bold mb-2">{item.judul}</h5>

@@ -7,7 +7,6 @@ body {
     box-sizing: border-box;
 }
 
-
 .login {
     display: flex;
     justify-content: center;
@@ -74,8 +73,8 @@ h4 {
     margin-bottom: 6px;      
 }
 
-.content-area .input-group .form-control {
-    width: 50%;             
+.page-wrappers .input-group .form-control {
+    width: 100%;             
     padding: 10px 14px;
     font-size: 14px;
     border-radius: 8px;
@@ -85,8 +84,11 @@ h4 {
 }
 
 .button-group {
+    width: 100%;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
     align-items: center;
     gap: 15px;
 }
@@ -95,7 +97,7 @@ h4 {
     background-color: #3c5a5b;
     color: white;
     padding: 12px;
-    width: 40%;
+    width: 100%;
     border-radius: 8px;
     font-size: 16px;
     border: none;
@@ -109,12 +111,13 @@ h4 {
     align-items: center;
     justify-content: center;
     border-radius: 7px;
-    height: 30px;
+    margin-top: 9px;
+    height: 45px;
     color: black;
     font-size: 16px;
     font-weight: bold;
     text-decoration: none;
-    width: 10%;
+    width: 30%;
 }
 
 .btn-secondary:hover {
@@ -308,7 +311,7 @@ select.form-control {
 }
 
 .content-area {
-    margin-left: 240px;
+    margin-left: 200px;
     width: 90%;
     min-height: 100vh;
     background-color: #ffffff;
@@ -390,7 +393,7 @@ select.form-control {
     border: none;
     border-radius: 5px;         
     padding: 8px 12px;
-    height: 36px;
+    height: 45px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s ease-in-out;
@@ -642,6 +645,96 @@ select.form-control {
     text-decoration: underline;
 }
 
+.laporan-wrapper {
+    border: none;
+    background: #ffffff;
+}
+
+.laporan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.laporan-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.laporan-card {
+    border-radius: 18px;
+    padding: 1.25rem 1.5rem;
+    background: #f9fafb;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.laporan-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+.laporan-icon {
+    font-size: 1.6rem;
+}
+
+.laporan-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.laporan-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.card-anggota {
+    border-left: 5px solid #c8102e;
+}
+
+.card-fiksi {
+    border-left: 5px solid #c8102e;
+}
+
+.card-nonfiksi {
+    border-left: 5px solid #c8102e;
+}
+
+.card-peminjaman {
+    border-left: 5px solid #c8102e;
+}
+
+.laporan-refresh-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db; 
+    background: #ffffff;
+    font-size: 0.85rem;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.15s ease, border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.laporan-refresh-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.laporan-refresh-btn:active {
+    background: #e5e7eb;
+    box-shadow: none;
+}
+
 /* @media (max-width: 480px) {
     .auth-card {
         padding: 22px 18px 20px;
@@ -669,6 +762,13 @@ select.form-control {
     }
 } */
 
+@media (max-width: 1000px)
+{
+    .laporan-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
 @media (max-width: 768px)
 {
     .sidebar 
@@ -687,7 +787,7 @@ select.form-control {
 
     .content-area
     {
-        margin-left: 240px;
+        margin-left: 200px;
         width: 100%;
     }
 
@@ -695,6 +795,70 @@ select.form-control {
     {
         margin-left: 110px;
         padding: 15px;
+    }
+
+    .form-control,
+    .auth-form .form-control {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    .content-card {
+        padding: 12px;
+    }
+
+    .btn-primary-tambah,
+    .btn-primary-cari,
+    .btn-primary-edit,
+    .btn-primary-danger {
+        width: 100%;
+    }
+
+    .table-border {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 450px)
+{
+    .sidebar 
+    {
+        width: 170px !important;
+        position: fixed;
+        overflow: hidden;
+        padding: 20px 12px;
+        z-index: 1;
+        box-shadow: 4px 0 10px rgba(0,0,0,0.15);
+    }
+
+    .sidebar.collapsed {
+        position: fixed;
+        overflow: hidden;
+        width: 60px !important;
+        height: 100vh;
+    }
+
+    .sidebar-logo.collapsed {
+        width: 40px;
+    }
+
+    .menu-item span {
+        display: none;
+    }
+
+    .content-area
+    {
+        margin-left: 60px;
+        width: 100%;
+        padding: 5px;
+    }
+
+    .content-area.collapsed
+    {
+        margin-left: 60px;
+        padding: 5px;
     }
 
     .form-control,
@@ -764,9 +928,9 @@ select.form-control {
 }
 
 .hamburger-btn {
-    position: absolute;
-    top: 15px;
-    right: -18px;             
+    position: fixed;
+    bottom: 15px;
+    left: 15px;             
     background: #C1121F;
     border: 2px solid #C1121F;
     color: #ffffff;

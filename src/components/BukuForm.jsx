@@ -49,7 +49,7 @@ const BukuForm = ({ onBukuCreated }) => {
     };
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
                 

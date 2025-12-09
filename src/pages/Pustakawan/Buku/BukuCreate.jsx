@@ -12,8 +12,8 @@ const BukuCreate = () => {
     return (
         <div className="page-wrapper py-4">
             <div className="container-fluid">
-                <div className="card shadow-lg rounded-4 content-card p-4">
-                    <h2 className="page-title">Tambah Buku</h2>
+                <div className="card shadow-lg rounded-4 content-card p-1">
+                    <h2 className="page-title mt-4">Tambah Buku</h2>
 
                     <BukuForm onBukuCreated={handleCreationSuccess} />
                 </div>

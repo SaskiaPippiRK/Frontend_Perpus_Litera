@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
@@ -12,14 +12,32 @@ export default function PeminjamanCreate() {
         tanggal_pengembalian: '',
     });
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+        if(name === "tanggal_peminjaman")
+        {
+            const startDate = new Date(value);
+            const endDate = new Date(value);
+            endDate.setDate(startDate.getDate() + 7);
+
+            const formattedEndDate = endDate.toISOString().split("T")[0];
+
+            setFormData({
+                ...formData,
+                tanggal_peminjaman: value,
+                tanggal_pengembalian: formattedEndDate,
+            });
+            
+        } else{
+            setFormData({
+                ...formData,
+                [e.target.name]: e.target.value,
+            });
+        } 
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(localStorage.getItem("token"));
 
         await fetch(`${API_BASE_URL}/peminjaman/create`, {
             method: "POST",
@@ -31,13 +49,13 @@ export default function PeminjamanCreate() {
     });
 
     alert("Peminjaman berhasil ditambahkan.");
-    navigate("/peminjaman");
+    navigate("/pustakawan/peminjaman");
     };
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/peminjaman/users`, {
+                const response = await fetch(`${API_BASE_URL}/anggota`, {
                 headers: {
                 Authorization: "Bearer " + localStorage.getItem("token"),
                 },
@@ -54,13 +72,13 @@ export default function PeminjamanCreate() {
     }, []);
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
                     <h2 className="page-title">Tambah Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Nama Peminjam</label>
                             <select
                                 name="id_users"
@@ -79,7 +97,7 @@ export default function PeminjamanCreate() {
                             </select>
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Tanggal Peminjaman</label>
                             <input 
                                 type="date" 
@@ -91,25 +109,24 @@ export default function PeminjamanCreate() {
                             />
                         </div>
 
-                        <div className="mb-3">
-                            <label className="form-label">Tanggal Pengembalian</label>
+                        <div className="input-group">
+                            <label className="form-label">Tanggal Pengembalian (auto)</label>
                             <input 
                                 type="date" 
                                 name="tanggal_pengembalian" 
                                 className="form-control"
                                 value={formData.tanggal_pengembalian}
-                                onChange={handleChange}
-                                required 
+                                readOnly
                             />
                         </div>
 
-                        <div className="d-flex gap-2">
+                        <div className="button-group">
                             <button type="submit" className="btn btn-primary-tambah">
                                 Simpan
                             </button>
-                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/peminjaman")}>
-                                Batal
-                            </button>
+                            <Link to={`/pustakawan/peminjaman`} className="btn btn-secondary">
+                                <i ></i> BATAL
+                            </Link>
                         </div>
 
                     </form>

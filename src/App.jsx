@@ -113,9 +113,22 @@ function App()
                         </ProtectedRoute>
                     } />
 
-                    <Route path="/pustakawan/detailPeminjaman/edit" element={
+                    <Route path="/pustakawan/detailPeminjaman/edit/:id" element={
                         <ProtectedRoute roles={['pustakawan']}>
                             <DetailPeminjamanEdit/>
+                        </ProtectedRoute>
+                    } />
+
+                    {/* PEMINJAMAN */}
+                    <Route path="/pustakawan/peminjaman" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <PeminjamanIndex/>
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/pustakawan/peminjaman/edit/:id" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <PeminjamanEdit/>
                         </ProtectedRoute>
                     } />
 
