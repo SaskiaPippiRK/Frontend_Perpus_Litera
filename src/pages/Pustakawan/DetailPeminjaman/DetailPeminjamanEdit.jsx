@@ -7,6 +7,8 @@ const API_BASE_URL = 'http://localhost:8000/api';
 const DetailPeminjamanEdit = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
+    
+    // State Data
     const [allBuku, setAllBuku] = useState([]);
     const [allPeminjaman, setAllPeminjaman] = useState([]);
 
@@ -17,49 +19,64 @@ const DetailPeminjamanEdit = () => {
         jumlah: '',
         status: '',
         denda: '',
+        // Tambahkan field yang mungkin dibutuhkan form select
+        id_users: '' 
     });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // 1. Fetch Data Detail yang mau diedit
     useEffect(() => {
         const fetchDetailPeminjamanData = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`);
-                const detailPeminjaman = response.data.data ?? response.data;
+                // Request 1: Ambil Detail
+                const resDetail = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`);
+                const detailData = resDetail.data.data ?? resDetail.data;
                 
-                response = await axios.get(`${API_BASE_URL}/buku/${detailPeminjaman.id_buku}`);
-                const buku = response.data.data ?? response.data;
-                response = await axios.get(`${API_BASE_URL}/peminjaman/${detailPeminjaman.id_peminjaman}`);
-                const peminjaman = response.data.data ?? response.data;
+                // Request 2: Ambil Buku (Berdasarkan ID dari detail)
+                const resBuku = await axios.get(`${API_BASE_URL}/buku/${detailData.id_buku}`);
+                const bukuData = resBuku.data.data ?? resBuku.data;
+                
+                // Request 3: Ambil Peminjaman (Berdasarkan ID dari detail)
+                const resPinjam = await axios.get(`${API_BASE_URL}/peminjaman/${detailData.id_peminjaman}`);
+                const pinjamData = resPinjam.data.data ?? resPinjam.data;
 
                 setFormData({
-                    id_detailPeminjaman: detailPeminjaman.id_detailPeminjaman || "",
-                    id_peminjaman: peminjaman.id_peminjaman || "",
-                    id_buku: buku.id_buku || "",
-                    jumlah: detailPeminjaman.jumlah || "",
-                    status: detailPeminjaman.status || "",
-                    denda: detailPeminjaman.denda || "",
+                    id_detailPeminjaman: detailData.id_detailPeminjaman || "",
+                    id_peminjaman: pinjamData.id_peminjaman || "",
+                    id_buku: bukuData.id_buku || "",
+                    jumlah: detailData.jumlah || "",
+                    status: detailData.status || "",
+                    denda: detailData.denda || "",
+                    // Mapping user id untuk dropdown
+                    id_users: pinjamData.id_user || "" 
                 });
                 setLoading(false);
-            } catch(err)
-            {
-                console.error("Gagal memuat data detail Peminjaman: ", err);
-                setError("Gagal memuat data peminjaman. Pastikan ID Detail Peminjaman benar dan API berfungsi.");
+            } catch(err) {
+                console.error("Gagal memuat data:", err);
+                setError("Gagal memuat data detail peminjaman.");
                 setLoading(false);
             }
         };
         fetchDetailPeminjamanData();
     }, [id]);
 
+    // 2. Fetch Data Master (Untuk Dropdown)
     useEffect(() => {
-        const fetchDatas = async () => {
-            const response = await axios.get(`${API_BASE_URL}/peminjaman`);
-            setAllPeminjaman(response.data.data ?? response.data);
-            response = await axios.get(`${API_BASE_URL}/buku`);
-            setAllBuku(response.data.data ?? response.data);
+        const fetchMasterData = async () => {
+            try {
+                // Gunakan nama variabel berbeda agar tidak bentrok
+                const resPinjamMaster = await axios.get(`${API_BASE_URL}/peminjaman`);
+                setAllPeminjaman(resPinjamMaster.data.data ?? resPinjamMaster.data);
+
+                const resBukuMaster = await axios.get(`${API_BASE_URL}/buku`);
+                setAllBuku(resBukuMaster.data.data ?? resBukuMaster.data);
+            } catch (err) {
+                console.error("Gagal memuat data master:", err);
+            }
         };
-        fetchDatas();
+        fetchMasterData();
     }, []);
 
     const handleChange = (e) => {
@@ -71,7 +88,7 @@ const DetailPeminjamanEdit = () => {
         e.preventDefault();
         setError(null);
 
-        try{
+        try {
             await axios.post(
                 `${API_BASE_URL}/detailPeminjaman/update/${id}`,
                 formData,
@@ -81,13 +98,12 @@ const DetailPeminjamanEdit = () => {
             alert("Detail Data peminjaman berhasil diperbarui!");
             navigate('/pustakawan/detailPeminjaman');
         } catch(err) {
-            console.error("Gagal memperbarui detail peminjaman: ", err.response ? err.response.data : err.message);
-            const serverError = err.response?.data?.message || "Kesalahan koneksi atau validasi";
-            setError(`Gagal memperbarui peminjaman: ${serverError}`);
+            console.error("Gagal update:", err);
+            setError("Gagal memperbarui peminjaman. Cek koneksi.");
         }
     };
 
-    if (loading) return <div className="p-4 text-center">Memuat data peminjaman...</div>;
+    if (loading) return <div className="p-4 text-center">Memuat data...</div>;
     if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
@@ -97,24 +113,25 @@ const DetailPeminjamanEdit = () => {
                     <h2 className="page-title">Update Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
+                        {/* Pilih Peminjam */}
                         <div className="mb-3">
-                            <label className="form-label">Nama Peminjam</label>
+                            <label className="form-label">ID Peminjaman (User)</label>
                             <select
-                                name="id_users"
+                                name="id_peminjaman" // Pastikan name sesuai dengan state
                                 className="form-control"
-                                value={formData.id_users}
+                                value={formData.id_peminjaman}
                                 onChange={handleChange}
                                 required>
-
-                                <option value="">-- Pilih Peminjam --</option>
+                                <option value="">-- Pilih Peminjaman --</option>
                                 {allPeminjaman.map((peminjam) => (
-                                    <option key={peminjam.user.id_users} value={peminjam.user.id_users}>
-                                        {peminjam.user.nama} - {new Date(peminjam.tanggal_peminjaman).toLocaleDateString()}
+                                    <option key={peminjam.id_peminjaman} value={peminjam.id_peminjaman}>
+                                        ID: {peminjam.id_peminjaman} - {peminjam.user?.nama || "User"}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
+                        {/* Pilih Buku */}
                         <div className="mb-3">
                             <label className="form-label">Buku yang dipinjam</label>
                             <select
@@ -123,7 +140,6 @@ const DetailPeminjamanEdit = () => {
                                 value={formData.id_buku}
                                 onChange={handleChange}
                                 required>
-
                                 <option value="">-- Pilih Buku --</option>
                                 {allBuku.map((buku) => (
                                     <option key={buku.id_buku} value={buku.id_buku}>
@@ -146,14 +162,27 @@ const DetailPeminjamanEdit = () => {
                         </div>
 
                         <div className="mb-3">
+                            <label className="form-label">Status</label>
+                            <select 
+                                name="status"
+                                className="form-control"
+                                value={formData.status}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="Dipinjam">Dipinjam</option>
+                                <option value="Kembali">Kembali</option>
+                            </select>
+                        </div>
+
+                        <div className="mb-3">
                             <label className="form-label">Denda</label>
                             <input 
-                                type="float" 
-                                name="tanggal_pengembalian" 
+                                type="number" 
+                                name="denda" 
                                 className="form-control"
-                                value={formData.tanggal_pengembalian}
+                                value={formData.denda}
                                 onChange={handleChange}
-                                readOnly
                             />
                         </div>
 
@@ -162,8 +191,8 @@ const DetailPeminjamanEdit = () => {
                                 Simpan
                             </button>
                         
-                            <Link to={`/pustakawan/peminjaman/`} className="btn btn-secondary">
-                                <i ></i> BATAL
+                            <Link to={`/pustakawan/detailPeminjaman/`} className="btn btn-secondary">
+                                BATAL
                             </Link>
                         </div>
 
@@ -175,4 +204,3 @@ const DetailPeminjamanEdit = () => {
 }
 
 export default DetailPeminjamanEdit;
-
