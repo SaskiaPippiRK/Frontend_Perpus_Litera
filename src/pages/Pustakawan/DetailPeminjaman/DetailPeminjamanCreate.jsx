@@ -5,106 +5,93 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function DetailPeminjamanCreate() {
     const navigate = useNavigate();
+    
     const [allBuku, setAllBuku] = useState([]);
     const [allPeminjaman, setAllPeminjaman] = useState([]);
 
     const [formData, setFormData] = useState({
-        id_detailPeminjaman: '',
-        id_peminjaman: '',
+        id_users: '',      
+        id_peminjaman: '',  
         id_buku: '',
         jumlah: '',
-        status: '',
-        denda: '0',
+        status: 'Dipinjam',
+        denda: 0,
     });
 
-    const calculateDendaStatus = (dataPeminjaman, jumlah) => {
-        if (!dataPeminjaman) return { denda: 0, status: "-", tanggal_batas: new Date()};
-        const max_peminjaman = 7;
-        const tanggal_peminjaman = new Date(dataPeminjaman.tanggal_peminjaman);
-        const tanggal_pengembalian = new Date(dataPeminjaman.tanggal_pengembalian);
-
-        const tanggal_batas_pengembalian = new Date(tanggal_peminjaman);
-        tanggal_batas_pengembalian.setDate(tanggal_batas_pengembalian.getDate() + max_peminjaman);
-
-        if (jumlah === 0) return { denda: 0, status: "-", tanggal_batas: tanggal_batas_pengembalian};
-        
-        const denda_awal = 500;
-        const hari_keterlambatan = Math.max(0, Math.floor((tanggal_pengembalian - tanggal_batas_pengembalian) / (1000 * 60 * 60 * 24)));
-        const totalDenda = hari_keterlambatan * denda_awal * jumlah;
-
-        if(totalDenda > 0) {
-            return { 
-                denda: totalDenda, 
-                status: "Terlambat",
-                tanggal_batas: tanggal_batas_pengembalian,
-            };
-        } else {
-            return { 
-                denda: 0, 
-                status: "Dipinjam",
-                tanggal_batas: tanggal_batas_pengembalian,
-            };
-        }
-    };
-
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        if (e.target.name === 'id_users') {
+            const selectedId = e.target.value;
+            const selectedData = allPeminjaman.find(p => p.user.id_users == selectedId);
+            
+            setFormData({
+                ...formData,
+                id_users: selectedId,
+                id_peminjaman: selectedData ? selectedData.id_peminjaman : '' 
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [e.target.name]: e.target.value,
+            });
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        await fetch(`${API_BASE_URL}/detailPeminjaman/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("auth_token"),
-            },
-            body: JSON.stringify(formData),
-    });
+        if(!formData.id_peminjaman) {
+            alert("Harap pilih Nama Peminjam terlebih dahulu!");
+            return;
+        }
 
-    alert("Peminjaman berhasil ditambahkan.");
-    navigate("/detailPeminjaman");
+        try {
+            const response = await fetch(`${API_BASE_URL}/detailPeminjaman/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("auth_token"),
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Gagal menyimpan data");
+            }
+
+            alert("Berhasil! Data detail peminjaman tersimpan.");
+            navigate("/pustakawan/detailPeminjaman");
+
+        } catch (err) {
+            console.error(err);
+            alert("Error: " + err.message);
+        }
     };
 
     useEffect(() => {
         const fetchDatas = async () => {
             try {
-                const bukuResponse = await fetch(`${API_BASE_URL}/buku`, {
-                    headers: {
-                        Authorization: "Bearer " + localStorage.getItem("auth_token"),
-                    },
-                });
+                const token = localStorage.getItem("auth_token");
+                const headers = { Authorization: `Bearer ${token}` };
 
-            if (!bukuResponse.ok) {
-                throw new Error(`Gagal mendapatkan daftar buku: ${bukuResponse.status}`);
-            }
+                const resBuku = await fetch(`${API_BASE_URL}/buku`, { headers });
+                const resPinjam = await fetch(`${API_BASE_URL}/peminjaman`, { headers });
+                const jsonBuku = await resBuku.json();
+                const jsonPinjam = await resPinjam.json();
+                const listBuku = Array.isArray(jsonBuku) ? jsonBuku : (jsonBuku.data || []);
+                const listPinjam = Array.isArray(jsonPinjam) ? jsonPinjam : (jsonPinjam.data || []);
 
-            const daftarBuku = await bukuResponse.json();
-            setAllBuku(daftarBuku);
-            
-            const peminjamanResponse = await fetch(`${API_BASE_URL}/peminjaman`, {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("auth_token"),
-                },
-            });
-            
-            if (!peminjamanResponse.ok) {
-                throw new Error(`Failed to fetch peminjaman: ${peminjamanResponse.status}`);
-            }
-            
-            const daftarPeminjaman = await peminjamanResponse.json();
-            setAllPeminjaman(daftarPeminjaman);
-            
+                setAllBuku(listBuku);
+                setAllPeminjaman(listPinjam);
+    
+                console.log("Data Buku:", listBuku);
+                console.log("Data Peminjam:", listPinjam);
+
             } catch (err) {
-                console.error("Error fetching data:", err);
-                alert("Gagal memuat data: " + err.message);
+                console.error("Gagal mengambil data:", err);
             }
         };
-
         fetchDatas();
     }, []);
 
@@ -112,9 +99,10 @@ export default function DetailPeminjamanCreate() {
         <div className="content-area py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
-                    <h2 className="page-title">Tambah Peminjaman</h2>
+                    <h2 className="page-title">Tambah Detail Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
+                        
                         <div className="mb-3">
                             <label className="form-label">Nama Peminjam</label>
                             <select
@@ -125,9 +113,9 @@ export default function DetailPeminjamanCreate() {
                                 required>
 
                                 <option value="">-- Pilih Peminjam --</option>
-                                {allPeminjaman.map((peminjam) => (
-                                    <option key={peminjam.user.id_users} value={peminjam.user.id_users}>
-                                        {peminjam.user.nama} - {new Date(peminjam.tanggal_peminjaman).toLocaleDateString()}
+                                {allPeminjaman.map((item) => (
+                                    <option key={item.id_peminjaman} value={item.user.id_users}>
+                                        {item.user ? item.user.nama : 'User Tidak Dikenal'} - {item.tanggal_peminjaman}
                                     </option>
                                 ))}
                             </select>
@@ -152,7 +140,7 @@ export default function DetailPeminjamanCreate() {
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Jumlah Peminjaman</label>
+                            <label className="form-label">Jumlah</label>
                             <input 
                                 type="number"
                                 name="jumlah" 
@@ -166,20 +154,19 @@ export default function DetailPeminjamanCreate() {
                         <div className="mb-3">
                             <label className="form-label">Denda</label>
                             <input 
-                                type="float" 
-                                name="tanggal_pengembalian" 
+                                type="number" 
+                                name="denda" 
                                 className="form-control"
-                                value={calculateDendaStatus.denda}
+                                value={formData.denda}
                                 onChange={handleChange}
-                                readOnly
                             />
                         </div>
 
                         <div className="d-flex gap-2">
-                            <button type="submit" className="btn btn-primary-tambah">
+                            <button type="submit" className="btn btn-primary-tambah" style={{backgroundColor: '#D11F26', color: 'white'}}>
                                 Simpan
                             </button>
-                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/detailPeminjaman")}>
+                            <button type="button" className="btn btn-secondary" onClick={() => navigate("/pustakawan/detailPeminjaman")}>
                                 Batal
                             </button>
                         </div>
