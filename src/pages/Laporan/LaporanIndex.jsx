@@ -30,66 +30,66 @@ export default function LaporanIndex() {
     }, []);
 
 return (
-    <div className="content-area py-4">
-        <div className="container-fluid">
-            <div className="card shadow-lg rounded-4 content-card p-4 laporan-wrapper">
-                <div className="laporan-header">
-                    <div>
-                        <h3 className="mb-1">Laporan Ringkasan</h3>
-                        <p className="text-muted mb-0">
-                            Ringkasan data perpustakaan: total anggota, buku fiksi,
-                            buku non fiksi, dan total peminjaman yang tercatat.
-                        </p>
+    <div className="laporan-wrapper py-4">
+            <div className="container-fluid">
+                <div className="card shadow-lg rounded-4 content-card p-4 content-wrapper">
+                    <div className="page-title">
+                        <div>
+                            <h2 className="mb-1">Laporan Ringkasan</h2>
+                            <p className="text-muted mb-0">
+                                Ringkasan data perpustakaan: total anggota, buku fiksi,
+                                buku non fiksi, dan total peminjaman yang tercatat.
+                            </p>
+                        </div>
+                        <button
+                            className="laporan-refresh-btn"
+                            onClick={fetchLaporan}
+                        >
+                            Refresh
+                        </button>
                     </div>
-                    <button
-                        className="laporan-refresh-btn"
-                        onClick={fetchLaporan}
-                    >
-                        Refresh
-                    </button>
+
+                    {loading && <p>Sedang memuat data...</p>}
+
+                    {error && !loading && (
+                        <div className="alert alert-danger mt-3" role="alert">
+                            {error}
+                        </div>
+                    )}
+
+                    {!loading && !error && data && (
+                        <div className="laporan-grid mt-4">
+                            <div className="laporan-card card-anggota">
+                                <div className="laporan-label">Jumlah Anggota</div>
+                                <div className="laporan-value">
+                                    {data.jumlah_anggota}
+                                </div>
+                            </div>
+
+                            <div className="laporan-card card-fiksi">
+                                <div className="laporan-label">Buku Fiksi</div>
+                                <div className="laporan-value">
+                                    {data.jumlah_buku_fiksi}
+                                </div>
+                            </div>
+
+                            <div className="laporan-card card-nonfiksi">
+                                <div className="laporan-label">Buku Non Fiksi</div>
+                                <div className="laporan-value">
+                                    {data.jumlah_buku_non_fiksi}
+                                </div>
+                            </div>
+
+                            <div className="laporan-card card-peminjaman">
+                                <div className="laporan-label">Jumlah Peminjaman</div>
+                                <div className="laporan-value">
+                                    {data.jumlah_peminjaman}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-
-                {loading && <p>Sedang memuat data...</p>}
-
-                {error && !loading && (
-                    <div className="alert alert-danger mt-3" role="alert">
-                        {error}
-                    </div>
-                )}
-
-                {!loading && !error && data && (
-                    <div className="laporan-grid mt-4">
-                        <div className="laporan-card card-anggota">
-                            <div className="laporan-label">Jumlah Anggota</div>
-                            <div className="laporan-value">
-                                {data.jumlah_anggota}
-                            </div>
-                        </div>
-
-                        <div className="laporan-card card-fiksi">
-                            <div className="laporan-label">Buku Fiksi</div>
-                            <div className="laporan-value">
-                                {data.jumlah_buku_fiksi}
-                            </div>
-                        </div>
-
-                        <div className="laporan-card card-nonfiksi">
-                            <div className="laporan-label">Buku Non Fiksi</div>
-                            <div className="laporan-value">
-                                {data.jumlah_buku_non_fiksi}
-                            </div>
-                        </div>
-
-                        <div className="laporan-card card-peminjaman">
-                            <div className="laporan-label">Jumlah Peminjaman</div>
-                            <div className="laporan-value">
-                                {data.jumlah_peminjaman}
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
-    </div>
 );
 }
