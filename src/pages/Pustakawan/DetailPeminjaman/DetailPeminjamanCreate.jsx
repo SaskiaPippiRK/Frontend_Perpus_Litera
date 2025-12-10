@@ -14,7 +14,7 @@ export default function DetailPeminjamanCreate() {
         id_peminjaman: '',  
         id_buku: '',
         jumlah: '',
-        status: 'Dipinjam',
+        status: 'dipinjam',
         denda: 0,
     });
 

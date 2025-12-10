@@ -28,6 +28,8 @@ export default function DetailPeminjamanIndex() {
             console.error(err);
 
             if(err.response?.status === 404) {
+
+                setAllDetailPeminjaman([]);
                 setError("Detail Peminjaman tidak ditemukan");
             } else if(err.response?.data?.message) {
                 setError(err.response.data.message);
@@ -35,11 +37,14 @@ export default function DetailPeminjamanIndex() {
                 setError("Gagal memuat detail data Peminjaman dari API Laravel.");
             }
 
-            setAllDetailPeminjaman([]);
+             if (err.response?.status !== 200) {
+                 setAllDetailPeminjaman([]);
+             }
         } finally{
             setLoading(false);
         }
     };
+
 
     const handleDelete = async(id) => {
         const token = localStorage.getItem("auth_token");
@@ -59,19 +64,16 @@ export default function DetailPeminjamanIndex() {
             }
         }
     };
-
-    if(loading) return <div className="p-4 text-center">Memuat data...</div>;
-    if(error) return <div className="p-4 alert alert-danger">{error}</div>;
-
     useEffect(() => {
         if (!idPeminjaman) {
             setLoading(false);
             setAllDetailPeminjaman([]);
             return;
         }
-
-        fetchDetailPeminjaman();
-    }, []);
+    }, []); 
+    
+    if(loading) return <div className="p-4 text-center">Memuat data...</div>;
+    if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="page-wrappers py-4">
@@ -91,39 +93,41 @@ export default function DetailPeminjamanIndex() {
                         {allDetailPeminjaman.map((item) => (
                             <div key={item.id_detail} className="col-12 col-sm-6 col-lg-4 mb-4">
                                 <div className="card shadow-sm h-100 rounded-4 border-1 p-3">
-                                    <h5 className="fw-bold mb-2">{item.peminjaman?.user?.nama ?? "-"}</h5>
-                                </div>
+                                    <h5 className="fw-bold mb-2 text-truncate" title={item.peminjaman?.user?.nama}>
+                                        {item.peminjaman?.user?.nama ?? "-"}
+                                    </h5>
+                                    
+                                    <div className="text-muted small mb-1">
+                                        ID: {item.id_detail}
+                                    </div>
 
-                                <div className="text-muted small mb-1">
-                                    ID: {item.id_detail}
-                                </div>
+                                    <div className="text-muted small mb-1 text-truncate" title={item.buku ? item.buku.judul : ""}>
+                                        Judul: {item.buku ? item.buku?.judul: "-"}
+                                    </div>
 
-                                <div className="text-muted small mb-1">
-                                    Judul: {item.buku ? item.buku?.judul: "-"}
-                                </div>
+                                    <div className="text-muted small mb-1">
+                                        Status: {item.status}
+                                    </div>
 
-                                <div className="text-muted small mb-1">
-                                    Status: {item.status}
-                                </div>
+                                    <div className="text-muted small mb-1">
+                                        Denda: Rp {item.denda},00
+                                    </div>
 
-                                <div className="text-muted small mb-1">
-                                    Denda: Rp {item.denda},00
-                                </div>
+                                    <div className="d-flex gap-2 mt-auto pt-3">
+                                        <Link 
+                                            to={`/pustakawan/detailPeminjaman/edit/${item.id_detail}`} 
+                                            className="btn btn-primary-edit flex-fill text-center"
+                                        >
+                                            EDIT
+                                        </Link>
 
-                                <div className="d-flex gap-2 mt-auto">
-                                    <Link 
-                                        to={`/pustakawan/detailPeminjaman/edit/${item.id_detail}`} 
-                                        className="btn btn-primary-edit w-50"
-                                    >
-                                        EDIT
-                                    </Link>
-
-                                    <button 
-                                        onClick={() => handleDelete(item.id_detail)} 
-                                        className="btn btn-primary-danger w-50"
-                                    >
-                                        HAPUS
-                                    </button>
+                                        <button 
+                                            onClick={() => handleDelete(item.id_detail)} 
+                                            className="btn btn-primary-danger flex-fill"
+                                        >
+                                            HAPUS
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
