@@ -45,6 +45,7 @@ export default function LaporanIndex() {
                     data?.jumlah_peminjaman ?? 0
                 ],
                 backgroundColor: ["#C1121F", "#C1121F", "#C1121F", "#C1121F"],
+                borderRadius: 5,
             }
         ]
     }
