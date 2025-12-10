@@ -26,14 +26,23 @@ const DetailPeminjamanEdit = () => {
 
     useEffect(() => {
         const fetchDetailPeminjamanData = async () => {
+            
             try {
-                const resDetail = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`);
+                const token = localStorage.getItem("auth_token");
+
+                const resDetail = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 const detailData = resDetail.data.data ?? resDetail.data;
                 
-                const resBuku = await axios.get(`${API_BASE_URL}/buku/${detailData.id_buku}`);
+                const resBuku = await axios.get(`${API_BASE_URL}/buku/${detailData.id_buku}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 const bukuData = resBuku.data.data ?? resBuku.data;
                 
-                const resPinjam = await axios.get(`${API_BASE_URL}/peminjaman/${detailData.id_peminjaman}`);
+                const resPinjam = await axios.get(`${API_BASE_URL}/peminjaman/${detailData.id_peminjaman}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 const pinjamData = resPinjam.data.data ?? resPinjam.data;
 
                 setFormData({
@@ -57,11 +66,16 @@ const DetailPeminjamanEdit = () => {
 
     useEffect(() => {
         const fetchMasterData = async () => {
+            const token = localStorage.getItem("auth_token");
             try {
-                const resPinjamMaster = await axios.get(`${API_BASE_URL}/peminjaman`);
+                const resPinjamMaster = await axios.get(`${API_BASE_URL}/peminjaman`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 setAllPeminjaman(resPinjamMaster.data.data ?? resPinjamMaster.data);
 
-                const resBukuMaster = await axios.get(`${API_BASE_URL}/buku`);
+                const resBukuMaster = await axios.get(`${API_BASE_URL}/buku`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }); 
                 setAllBuku(resBukuMaster.data.data ?? resBukuMaster.data);
             } catch (err) {
                 console.error("Gagal memuat data master:", err);
@@ -98,7 +112,7 @@ const DetailPeminjamanEdit = () => {
     if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
                     <h2 className="page-title">Update Peminjaman</h2>

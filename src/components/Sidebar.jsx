@@ -52,7 +52,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
        
         {
             path: "/anggota/peminjaman", 
-            label: "Buku yang Dipinjam", 
+            label: "Buku Saya", 
             normal: iconPeminjamanNormal, 
             active: iconPeminjamanSelected,
         }

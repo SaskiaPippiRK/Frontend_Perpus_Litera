@@ -81,9 +81,12 @@ export default function DetailPeminjamanIndex() {
                 <div className = "card shadow-lg rounded-4 content-card p-4">
                     <h2 className = "page-title">Detail Peminjaman</h2>
 
-                    <div className="d-flex gap-2 mb-3">
-                        <input type="text" className="form-control" placeholder="Masukkan ID Peminjaman" value={idPeminjaman} onChange={(e) => setIdPeminjaman(e.target.value)} />
-                        <button className="btn btn-primary" onClick={fetchDetailPeminjaman}>Cari</button>
+                    <div className="d-flex gap-2 mb-3 flex-column">
+                        <div className="d-flex gap-2 flex-row">
+                            <input type="text" className="form-control" placeholder="Masukkan ID Peminjaman" value={idPeminjaman} onChange={(e) => setIdPeminjaman(e.target.value)} />
+                        <button className="btn btn-secondary" onClick={fetchDetailPeminjaman}>Cari</button>
+                        </div>
+                        
                         <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/detailPeminjaman/create")}>
                             Tambah Peminjaman
                         </button>
