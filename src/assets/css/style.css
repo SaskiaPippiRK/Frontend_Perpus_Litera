@@ -7,7 +7,6 @@ body {
     box-sizing: border-box;
 }
 
-
 .login {
     display: flex;
     justify-content: center;
@@ -74,8 +73,8 @@ h4 {
     margin-bottom: 6px;      
 }
 
-.content-area .input-group .form-control {
-    width: 50%;             
+.page-wrappers .input-group .form-control {
+    width: 100%;             
     padding: 10px 14px;
     font-size: 14px;
     border-radius: 8px;
@@ -85,8 +84,11 @@ h4 {
 }
 
 .button-group {
+    width: 100%;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
     align-items: center;
     gap: 15px;
 }
@@ -95,7 +97,7 @@ h4 {
     background-color: #3c5a5b;
     color: white;
     padding: 12px;
-    width: 40%;
+    width: 100%;
     border-radius: 8px;
     font-size: 16px;
     border: none;
@@ -109,12 +111,13 @@ h4 {
     align-items: center;
     justify-content: center;
     border-radius: 7px;
-    height: 30px;
+    margin-top: 9px;
+    height: 45px;
     color: black;
     font-size: 16px;
     font-weight: bold;
     text-decoration: none;
-    width: 10%;
+    width: 30%;
 }
 
 .btn-secondary:hover {
@@ -179,17 +182,39 @@ select.form-control {
 }
 
 .sidebar {
-    width: 200px;
-    height: 100vh;
+    width: 180px;
+    min-height: 100vh;
     background-color: #FFFFFF;
-    padding: 20px;
+    padding: 30px 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: 0.3s;
+}
+
+.sidebar.collapsed {
+    width: 80px !important;
+}
+
+.sidebar-logo {
+    width: 110px;
+    margin: 10px auto 20px auto;
+    transition: 0.3s;
+}
+
+.sidebar-logo.collapsed
+{
+    width: 50px;
 }
 
 .layout-container {
     display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
     flex-direction: row;
 }
 
@@ -286,18 +311,26 @@ select.form-control {
 }
 
 .content-area {
-    margin-left: 10px;
-    width: 100%;
+    margin-left: 200px;
+    width: 90%;
     min-height: 100vh;
     background-color: #ffffff;
     padding: 1rem;
+    transition: 0.3s;
+}
+
+.content-area.collapsed
+{
+    width: 100%;
+    margin-left: 110px;
+    transition: 0.3s;
 }
 
 .content-card {
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
-    max-width: 3000px;
+    max-width: 100%;
     margin: auto;
     padding: 15px;
 }
@@ -360,7 +393,7 @@ select.form-control {
     border: none;
     border-radius: 5px;         
     padding: 8px 12px;
-    height: 36px;
+    height: 45px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s ease-in-out;
@@ -499,10 +532,6 @@ select.form-control {
 }
 
 
-/* ===================================================== */
-/*         AUTH PAGE BARU (LOGIN & REGISTER)            */
-/* ===================================================== */
-
 .auth-page {
     min-height: 100vh;
     display: flex;
@@ -616,61 +645,6 @@ select.form-control {
     text-decoration: underline;
 }
 
-@media (max-width: 480px) {
-    .auth-card {
-        padding: 22px 18px 20px;
-        border-radius: 12px;
-    }
-
-    .auth-title {
-        font-size: 22px;
-    }
-
-    .auth-form .form-control {
-        font-size: 13px;
-    }
-}
-
-.sidebar {
-    width: 200px;
-    height: 100vh;
-    background-color: #FFFFFF;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    position: relative;
-    gap: 20px;
-}
-
-
-.sidebar .menu-items {
-    flex-grow: 1;
-}
-
-.logout-button {
-    margin-top: 20px;
-    width: 100%;
-    text-align: center;
-}
-
-.logout-button .btn {
-    background-color: #C1121F;
-    color: white;
-    padding: 12px 18px;
-    width: 80%;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-    border: none;
-}
-
-.logout-button .btn:hover {
-    background-color: #a20e1a;
-}
-
-/* Laporan CSS */
 .laporan-wrapper {
     border: none;
     background: #ffffff;
@@ -722,25 +696,25 @@ select.form-control {
 }
 
 .card-anggota {
-    border-left: 5px solid #3b82f6;
+    border-left: 5px solid #c8102e;
 }
 
 .card-fiksi {
-    border-left: 5px solid #ec4899;
+    border-left: 5px solid #c8102e;
 }
 
 .card-nonfiksi {
-    border-left: 5px solid #10b981;
+    border-left: 5px solid #c8102e;
 }
 
 .card-peminjaman {
-    border-left: 5px solid #f59e0b;
+    border-left: 5px solid #c8102e;
 }
 
 .laporan-refresh-btn {
     padding: 6px 14px;
     border-radius: 6px;
-    border: 1px solid #d1d5db; /* abu-abu muda */
+    border: 1px solid #d1d5db; 
     background: #ffffff;
     font-size: 0.85rem;
     color: #374151;
@@ -761,4 +735,219 @@ select.form-control {
     box-shadow: none;
 }
 
-/* Laporan CSS */
+/* @media (max-width: 480px) {
+    .auth-card {
+        padding: 22px 18px 20px;
+        border-radius: 12px;
+    }
+
+    .auth-title {
+        font-size: 22px;
+    }
+
+    .auth-form .form-control {
+        font-size: 13px;
+    }
+
+    .content-area.collapsed
+    {
+        margin-left: 110px;
+        transition: 0.3s;
+    }
+
+    .login-card .form-control,
+    .register-card .form-control {
+        width: 100%;
+        font-size: 16px;
+    }
+} */
+
+@media (max-width: 1000px)
+{
+    .laporan-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+@media (max-width: 768px)
+{
+    .sidebar 
+    {
+        width: 180px !important;
+        padding: 30px 18px;
+    }
+
+    .sidebar.collapsed {
+        width: 80px !important;
+    }
+
+    .menu-item span {
+        display: none;
+    }
+
+    .content-area
+    {
+        margin-left: 200px;
+        width: 100%;
+    }
+
+    .content-area.collapsed
+    {
+        margin-left: 110px;
+        padding: 15px;
+    }
+
+    .form-control,
+    .auth-form .form-control {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    .content-card {
+        padding: 12px;
+    }
+
+    .btn-primary-tambah,
+    .btn-primary-cari,
+    .btn-primary-edit,
+    .btn-primary-danger {
+        width: 100%;
+    }
+
+    .table-border {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 450px)
+{
+    .sidebar 
+    {
+        width: 170px !important;
+        position: fixed;
+        overflow: hidden;
+        padding: 20px 12px;
+        z-index: 1;
+        box-shadow: 4px 0 10px rgba(0,0,0,0.15);
+    }
+
+    .sidebar.collapsed {
+        position: fixed;
+        overflow: hidden;
+        width: 60px !important;
+        height: 100vh;
+    }
+
+    .sidebar-logo.collapsed {
+        width: 40px;
+    }
+
+    .menu-item span {
+        display: none;
+    }
+
+    .content-area
+    {
+        margin-left: 60px;
+        width: 100%;
+        padding: 5px;
+    }
+
+    .content-area.collapsed
+    {
+        margin-left: 60px;
+        padding: 5px;
+    }
+
+    .form-control,
+    .auth-form .form-control {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    .content-card {
+        padding: 12px;
+    }
+
+    .btn-primary-tambah,
+    .btn-primary-cari,
+    .btn-primary-edit,
+    .btn-primary-danger {
+        width: 100%;
+    }
+
+    .table-border {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+.sidebar .menu-items {
+    flex-grow: 1;
+}
+
+.logout-button {
+    margin-top: 20px;
+}
+
+.logout-button .btn {
+    width: 50%;
+    margin-left: 10px;
+    justify-items: center;
+    padding: 10px 14px;
+    background: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.logout-button .btn.collapsed {
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+    justify-items: center;
+    padding: 10px 14px;
+    background: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-button .btn:hover {
+    background-color: #a20e1a;
+}
+
+.hamburger-btn {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;             
+    background: #C1121F;
+    border: 2px solid #C1121F;
+    color: #ffffff;
+    padding: 6px 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 2000;
+    transition: 0.3s;
+}
+
+.hamburger-btn:hover {
+    background-color: #a20e1a;
+    color: white;
+}
+
+.page-wrapper {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}

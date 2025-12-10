@@ -48,60 +48,62 @@ const BukuIndex = () => {
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrapper py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
-                    <h2 className = "page-title">Buku ANGGOTA</h2>
+                    <h2 className = "page-title">Buku Tersedia</h2>
 
                     <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/buku/create")}>
                         Tambah Buku
                     </button>
                     
-                    <div className="table-responsive mt-3">
-                        <table className="table-border">
-                            <thead className="table-primary">
-                                <tr>
-                                    <th className="text-center">Judul Buku</th>
-                                    <th className="text-center">Penulis</th>
-                                    <th className="text-center">Penerbit</th>
-                                    <th className="text-center">Tahun Terbit</th>
-                                    <th className="text-center">Kategori</th>
-                                    <th className="text-center">Lokasi</th>
-                                    <th className="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {buku.map((buku, index) => (
-                                    <tr key={buku.id_buku}>
-                                        <td className="text-center">{buku.judul}</td>
-                                        <td className="text-center">{buku.penulis}</td>
-                                        <td className="text-center">{buku.penerbit}</td>
-                                        <td className="text-center">{buku.tahun_terbit}</td>
-                                        <td className="text-center">{buku.kategori}</td>
-                                        <td className="text-center">{buku.lokasi_buku}</td>
-                                        <td className="text-center">
-                                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "8px" }}>
-                                                <Link to={`/pustakawan/buku/edit/${buku.id_buku}`} className="btn btn-primary-edit">
-                                                    <i ></i> EDIT
-                                                </Link>
+                    <div className="row mt-4">
+                        {buku.map((item) => (
+                            <div key={item.id_buku} className="col-12 col-sm-6 col-lg-4 mb-4">
+                                <div className="card shadow-sm h-100 rounded-4 border-1 p-3">
 
-                                                <button onClick={() => handleDelete(buku.id_buku)} className="btn btn-primary-danger">
-                                                        <i></i> HAPUS
-                                                    </button>
-                                        
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {buku.length === 0 && (
-                                <tr>
-                                    <td colSpan={7} className="text-center">
-                                    Tidak ada data buku
-                                    </td>
-                                </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                    <h5 className="fw-bold mb-2">{item.judul}</h5>
+
+                                    <div className="text-muted small mb-1">
+                                        Penulis: {item.penulis}
+                                    </div>
+                                    <div className="text-muted small mb-1">
+                                        Penerbit: {item.penerbit}
+                                    </div>
+                                    <div className="text-muted small mb-1">
+                                        Tahun: {item.tahun_terbit}
+                                    </div>
+                                    <div className="text-muted small mb-1">
+                                        Kategori: {item.kategori}
+                                    </div>
+                                    <div className="text-muted small mb-3">
+                                        Lokasi: {item.lokasi_buku}
+                                    </div>
+
+                                    <div className="d-flex gap-2 mt-auto">
+                                        <Link 
+                                            to={`/pustakawan/buku/edit/${item.id_buku}`} 
+                                            className="btn btn-primary-edit w-50"
+                                        >
+                                            EDIT
+                                        </Link>
+
+                                        <button 
+                                            onClick={() => handleDelete(item.id_buku)} 
+                                            className="btn btn-primary-danger w-50"
+                                        >
+                                            HAPUS
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {buku.length === 0 && (
+                            <div className="col-12 text-center text-muted py-5">
+                                Tidak ada data buku
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

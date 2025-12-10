@@ -8,8 +8,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
 //Anggota
-import BukuIndexAnggota from "./pages/Anggota/BukuIndex";
-
+import BukuIndexAnggota from "./pages/Anggota/BukuIndex"; // Ini Katalog Buku
+import AnggotaPeminjaman from "./pages/Anggota/AnggotaPeminjaman"; // Ini Daftar Peminjaman Pribadi
 //Pustakawan
 import BukuIndexPustakawan from "./pages/Pustakawan/Buku/BukuIndex";
 import BukuCreatePustakawan from "./pages/Pustakawan/Buku/BukuCreate";
@@ -119,6 +119,19 @@ function App()
                         </ProtectedRoute>
                     } />
 
+                    {/* PEMINJAMAN */}
+                    <Route path="/pustakawan/peminjaman" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <PeminjamanIndex/>
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/pustakawan/peminjaman/edit/:id" element={
+                        <ProtectedRoute roles={['pustakawan']}>
+                            <PeminjamanEdit/>
+                        </ProtectedRoute>
+                    } />
+
                     {/* LAPORAN */}
                     <Route path="/pustakawan/laporan" element={
                         <ProtectedRoute roles={['pustakawan']}>
@@ -133,6 +146,13 @@ function App()
                             <BukuIndexAnggota/>
                         </ProtectedRoute>
                     } />
+
+                    <Route path="/anggota/peminjaman" element={
+                        <ProtectedRoute roles={['anggota']}>
+                            <AnggotaPeminjaman/>
+                        </ProtectedRoute>
+                    } />
+
                 </Route>
             </Routes>
         </BrowserRouter>

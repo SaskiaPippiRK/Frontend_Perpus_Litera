@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 
@@ -59,56 +59,59 @@ export default function PeminjamanIndex() {
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrapper py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
-                    <h2 className = "page-title">Peminjaman</h2>
+                    <h2 className = "page-title">Daftar Peminjaman</h2>
 
                     <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/peminjaman/create")}>
                         Tambah Peminjaman
                     </button>
 
-                    <div className="table-responsive mt-3">
-                        <table className="table-border">
-                            <thead className="table-primary">
-                                <tr>
-                                    <th className="text-center">ID</th>
-                                    <th className="text-center">Nama Peminjam</th>
-                                    <th className="text-center">Tanggal Peminjaman</th>
-                                    <th className="text-center">Tanggal Pengembalian</th>
-                                    <th className="text-center">Aksi</th>
-                                   
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {allPeminjaman.map((peminjaman) => (
-                                    <tr key={peminjaman.id_peminjaman}>
-                                        <td className="text-center">{peminjaman.id_peminjaman}</td>
-                                        <td className="text-center">{peminjaman.user ? peminjaman.user.nama : "-"}</td>
-                                        <td className="text-center">{peminjaman.tanggal_peminjaman}</td>
-                                        <td className="text-center">{peminjaman.tanggal_pengembalian}</td>
-                                        
-                                        <td className="text-center">
-                                            <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/pustakawan/peminjaman/edit/${peminjaman.id_peminjaman}`)}>
-                                                    EDIT
-                                                </button>
-                                                <button className="btn btn-primary-danger" onClick={() => handleDelete(peminjaman.id_peminjaman)}>
-                                                    HAPUS
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {allPeminjaman.length === 0 && (
-                                <tr>
-                                    <td colSpan={5} className="text-center">
-                                    Tidak ada data Peminjaman
-                                    </td>
-                                </tr>
-                                )}
-                            </tbody>
-                        </table>
+                    <div className="row mt-4">
+                        {allPeminjaman.map((item) => (
+                            <div key={item.id_peminjaman} className="col-12 col-sm-6 col-lg-4 mb-4">
+                                <div className="card shadow-sm h-100 rounded-4 border-1 p-3">
+                                    <h5 className="fw-bold mb-2">{item.user ? item.user.nama : "-"}</h5>
+
+                                    <div className="text-muted small mb-1">
+                                        ID: {item.id_peminjaman}
+                                    </div>
+
+                                    <div className="text-muted small mb-1">
+                                        Tanggal Peminjaman: {item.tanggal_peminjaman}
+                                    </div>
+
+                                    <div className="text-muted small mb-1">
+                                        Tanggal Pengembalian: {item.tanggal_pengembalian}
+                                    </div>
+
+                                    <div className="d-flex gap-2 mt-auto">
+                                            <Link 
+                                                to={`/pustakawan/peminjaman/edit/${item.id_peminjaman}`} 
+                                                className="btn btn-primary-edit w-50"
+                                            >
+                                                EDIT
+                                            </Link>
+
+                                            <button 
+                                                onClick={() => handleDelete(item.id_peminjaman)} 
+                                                className="btn btn-primary-danger w-50"
+                                            >
+                                                HAPUS
+                                            </button>
+                                        </div>
+
+                                </div>
+                            </div>
+                            
+                        ))}
+
+                        {allPeminjaman.length == 0 && (
+                            <div className="col-12 text-center text-muted py-5">
+                                Tidak ada data Peminjam
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

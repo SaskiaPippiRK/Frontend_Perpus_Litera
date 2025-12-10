@@ -1,39 +1,62 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function DetailPeminjamanIndex() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [allDetailPeminjaman, setAllDetailPeminjaman] = useState([]);
+    const [idPeminjaman, setIdPeminjaman] = useState("");
 
     const fetchDetailPeminjaman = async () => {
         try  {
-            const response = await axios.get(`${API_BASE_URL}/detailPeminjaman`, {
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("auth_token")
+            setLoading(true);
+            setError(null);
+
+            const token = localStorage.getItem("auth_token");
+            const response = await axios.get(`${API_BASE_URL}/detailPeminjaman/peminjaman/${idPeminjaman}`, {
+                headers : {
+                    "Authorization": `Bearer ${token}`
                 }
             });
+
             setAllDetailPeminjaman(response.data);
-            setLoading(false);
         } catch(err)  {
-            setError("Gagal memuat detail data Peminjaman dari API Laravel.");
+            console.error(err);
+
+            if(err.response?.status === 404) {
+
+                setAllDetailPeminjaman([]);
+                setError("Detail Peminjaman tidak ditemukan");
+            } else if(err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError("Gagal memuat detail data Peminjaman dari API Laravel.");
+            }
+
+             if (err.response?.status !== 200) {
+                 setAllDetailPeminjaman([]);
+             }
+        } finally{
             setLoading(false);
         }
     };
 
+
     const handleDelete = async(id) => {
+        const token = localStorage.getItem("auth_token");
         if(window.confirm("Apakah Anda yakin ingin menghapus data peminjaman ini?")) {
             try {
                 await axios.delete(`${API_BASE_URL}/detailPeminjaman/delete/${id}`, {
                     headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("auth_token")
+                        "Authorization": `Bearer ${token}`
                     }
                 });
                 alert("Detail Peminjaman berhasil dihapus!");
+
                 fetchDetailPeminjaman();
             } catch(err) {
                 console.error("Gagal menghapus detail peminjaman: ", err);
@@ -41,68 +64,82 @@ export default function DetailPeminjamanIndex() {
             }
         }
     };
+    useEffect(() => {
+        if (!idPeminjaman) {
+            setLoading(false);
+            setAllDetailPeminjaman([]);
+            return;
+        }
+    }, []); 
     
-        useEffect(() => {
-            fetchDetailPeminjaman();
-        }, []);
-
     if(loading) return <div className="p-4 text-center">Memuat data...</div>;
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className = "card shadow-lg rounded-4 content-card p-4">
                     <h2 className = "page-title">Detail Peminjaman</h2>
 
-                    <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/detailPeminjaman/create")}>
-                        Tambah Peminjaman
-                    </button>
+                    <div className="d-flex gap-2 mb-3 flex-column">
+                        <div className="d-flex gap-2 flex-row">
+                            <input type="text" className="form-control" placeholder="Masukkan ID Peminjaman" value={idPeminjaman} onChange={(e) => setIdPeminjaman(e.target.value)} />
+                        <button className="btn btn-secondary" onClick={fetchDetailPeminjaman}>Cari</button>
+                        </div>
+                        
+                        <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/detailPeminjaman/create")}>
+                            Tambah Peminjaman
+                        </button>
+                    </div>
 
-                    <div className="table-responsive mt-3">
-                        <table className="table-border">
-                            <thead className="table-primary">
-                                <tr>
-                                    <th className="text-center">ID</th>
-                                    <th className="text-center">Nama Peminjam</th>
-                                    <th className="text-center">Judul Buku</th>
-                                    <th className="text-center">Jumlah</th>
-                                    <th className="text-center">Status</th>
-                                    <th className="text-center">Denda</th>
-                                    <th className="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {allDetailPeminjaman.map((detailPeminjaman) => (
-                                    <tr key={detailPeminjaman.id_detail}>
-                                        <td className="text-center">{detailPeminjaman.id_detail}</td>
-                                        <td className="text-center">{detailPeminjaman.peminjaman.user ? detailPeminjaman.peminjaman.user.nama : "-"}</td>
-                                        <td className="text-center">{detailPeminjaman.buku ? detailPeminjaman.buku.judul : "-"}</td>
-                                        <td className="text-center">{detailPeminjaman.jumlah}</td>
-                                        <td className="text-center">{detailPeminjaman.status}</td>
-                                        <td className="text-center">{detailPeminjaman.denda}</td>
-                                        
-                                        <td className="text-center">
-                                            <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                                                <button className="btn btn-primary-edit" onClick={() => navigate(`/pustakawan/detailPeminjaman/edit/${detailPeminjaman.id_detail}`)}>
-                                                    EDIT
-                                                </button>
-                                                <button className="btn btn-primary-danger" onClick={() => handleDelete(detailPeminjaman.id_detail)}>
-                                                    HAPUS
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {allDetailPeminjaman.length === 0 && (
-                                <tr>
-                                    <td colSpan={7} className="text-center">
-                                    Tidak ada data Peminjaman
-                                    </td>
-                                </tr>
-                                )}
-                            </tbody>
-                        </table>
+                    <div className="row mt-4">
+                        {allDetailPeminjaman.map((item) => (
+                            <div key={item.id_detail} className="col-12 col-sm-6 col-lg-4 mb-4">
+                                <div className="card shadow-sm h-100 rounded-4 border-1 p-3">
+                                    <h5 className="fw-bold mb-2 text-truncate" title={item.peminjaman?.user?.nama}>
+                                        {item.peminjaman?.user?.nama ?? "-"}
+                                    </h5>
+                                    
+                                    <div className="text-muted small mb-1">
+                                        ID: {item.id_detail}
+                                    </div>
+
+                                    <div className="text-muted small mb-1 text-truncate" title={item.buku ? item.buku.judul : ""}>
+                                        Judul: {item.buku ? item.buku?.judul: "-"}
+                                    </div>
+
+                                    <div className="text-muted small mb-1">
+                                        Status: {item.status}
+                                    </div>
+
+                                    <div className="text-muted small mb-1">
+                                        Denda: Rp {item.denda},00
+                                    </div>
+
+                                    <div className="d-flex gap-2 mt-auto pt-3">
+                                        <Link 
+                                            to={`/pustakawan/detailPeminjaman/edit/${item.id_detail}`} 
+                                            className="btn btn-primary-edit flex-fill text-center"
+                                        >
+                                            EDIT
+                                        </Link>
+
+                                        <button 
+                                            onClick={() => handleDelete(item.id_detail)} 
+                                            className="btn btn-primary-danger flex-fill"
+                                        >
+                                            HAPUS
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {allDetailPeminjaman.length == 0 && (
+                            <div className="col-12 text-center text-muted py-5">
+                                Tidak ada data buku
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

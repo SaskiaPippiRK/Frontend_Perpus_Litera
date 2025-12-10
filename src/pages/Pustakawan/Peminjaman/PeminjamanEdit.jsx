@@ -86,7 +86,7 @@ const PeminjamanEdit = () => {
     if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
-        <div className="content-area py-4">
+        <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
                     <h2 className="page-title">Update Peminjaman</h2>
