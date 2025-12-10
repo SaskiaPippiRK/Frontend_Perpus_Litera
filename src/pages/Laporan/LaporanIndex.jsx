@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const API_BASE_URL = "http://localhost:8000/api";
 
@@ -28,6 +32,22 @@ export default function LaporanIndex() {
     useEffect(() => {
         fetchLaporan();
     }, []);
+
+    const barLaporan = {
+        labels: ["Jumlah Anggota", "Buku Fiksi", "Buku Non Fiksi", "Jumlah Peminjaman"],
+        datasets: [
+            {
+                label: "Jumlah Data",
+                data: [
+                    data?.jumlah_anggota ?? 0,
+                    data?.jumlah_buku_fiksi ?? 0,
+                    data?.jumlah_buku_non_fiksi ?? 0,
+                    data?.jumlah_peminjaman ?? 0
+                ],
+                backgroundColor: ["#C1121F", "#C1121F", "#C1121F", "#C1121F"],
+            }
+        ]
+    }
 
 return (
     <div className="laporan-wrapper py-4">
@@ -62,28 +82,35 @@ return (
                             <div className="laporan-card card-anggota">
                                 <div className="laporan-label">Jumlah Anggota</div>
                                 <div className="laporan-value">
-                                    {data.jumlah_anggota}
+                                    {data?.jumlah_anggota ?? 0}
                                 </div>
                             </div>
 
                             <div className="laporan-card card-fiksi">
                                 <div className="laporan-label">Buku Fiksi</div>
                                 <div className="laporan-value">
-                                    {data.jumlah_buku_fiksi}
+                                    {data?.jumlah_buku_fiksi ?? 0}
                                 </div>
                             </div>
 
                             <div className="laporan-card card-nonfiksi">
                                 <div className="laporan-label">Buku Non Fiksi</div>
                                 <div className="laporan-value">
-                                    {data.jumlah_buku_non_fiksi}
+                                    {data?.jumlah_buku_non_fiksi ?? 0}
                                 </div>
                             </div>
 
                             <div className="laporan-card card-peminjaman">
                                 <div className="laporan-label">Jumlah Peminjaman</div>
                                 <div className="laporan-value">
-                                    {data.jumlah_peminjaman}
+                                    {data?.jumlah_peminjaman ?? 0}
+                                </div>
+                            </div>
+
+                            <div className="laporan-card card-bar">
+                                <div className="laporan-label">Grafik Data</div>
+                                <div className="laporan-value">
+                                    <Bar data = {barLaporan} width={150} height={150}/>
                                 </div>
                             </div>
                         </div>
