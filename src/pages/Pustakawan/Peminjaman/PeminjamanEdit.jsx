@@ -113,6 +113,7 @@ const PeminjamanEdit = () => {
                                 value={formData.tanggal_peminjaman}
                                 onChange={handleChange}
                                 required 
+                                readOnly
                             />
                         </div>
 

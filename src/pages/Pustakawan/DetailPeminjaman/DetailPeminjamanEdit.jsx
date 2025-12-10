@@ -8,7 +8,6 @@ const DetailPeminjamanEdit = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
     
-    // State Data
     const [allBuku, setAllBuku] = useState([]);
     const [allPeminjaman, setAllPeminjaman] = useState([]);
 
@@ -19,26 +18,21 @@ const DetailPeminjamanEdit = () => {
         jumlah: '',
         status: '',
         denda: '',
-        // Tambahkan field yang mungkin dibutuhkan form select
         id_users: '' 
     });
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // 1. Fetch Data Detail yang mau diedit
     useEffect(() => {
         const fetchDetailPeminjamanData = async () => {
             try {
-                // Request 1: Ambil Detail
                 const resDetail = await axios.get(`${API_BASE_URL}/detailPeminjaman/${id}`);
                 const detailData = resDetail.data.data ?? resDetail.data;
                 
-                // Request 2: Ambil Buku (Berdasarkan ID dari detail)
                 const resBuku = await axios.get(`${API_BASE_URL}/buku/${detailData.id_buku}`);
                 const bukuData = resBuku.data.data ?? resBuku.data;
                 
-                // Request 3: Ambil Peminjaman (Berdasarkan ID dari detail)
                 const resPinjam = await axios.get(`${API_BASE_URL}/peminjaman/${detailData.id_peminjaman}`);
                 const pinjamData = resPinjam.data.data ?? resPinjam.data;
 
@@ -49,7 +43,6 @@ const DetailPeminjamanEdit = () => {
                     jumlah: detailData.jumlah || "",
                     status: detailData.status || "",
                     denda: detailData.denda || "",
-                    // Mapping user id untuk dropdown
                     id_users: pinjamData.id_user || "" 
                 });
                 setLoading(false);
@@ -62,11 +55,9 @@ const DetailPeminjamanEdit = () => {
         fetchDetailPeminjamanData();
     }, [id]);
 
-    // 2. Fetch Data Master (Untuk Dropdown)
     useEffect(() => {
         const fetchMasterData = async () => {
             try {
-                // Gunakan nama variabel berbeda agar tidak bentrok
                 const resPinjamMaster = await axios.get(`${API_BASE_URL}/peminjaman`);
                 setAllPeminjaman(resPinjamMaster.data.data ?? resPinjamMaster.data);
 
@@ -113,11 +104,10 @@ const DetailPeminjamanEdit = () => {
                     <h2 className="page-title">Update Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
-                        {/* Pilih Peminjam */}
                         <div className="mb-3">
                             <label className="form-label">ID Peminjaman (User)</label>
                             <select
-                                name="id_peminjaman" // Pastikan name sesuai dengan state
+                                name="id_peminjaman"
                                 className="form-control"
                                 value={formData.id_peminjaman}
                                 onChange={handleChange}
@@ -131,7 +121,6 @@ const DetailPeminjamanEdit = () => {
                             </select>
                         </div>
 
-                        {/* Pilih Buku */}
                         <div className="mb-3">
                             <label className="form-label">Buku yang dipinjam</label>
                             <select

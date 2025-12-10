@@ -14,8 +14,38 @@ export default function DetailPeminjamanCreate() {
         id_buku: '',
         jumlah: '',
         status: '',
-        denda: '',
+        denda: '0',
     });
+
+    const calculateDendaStatus = (dataPeminjaman, jumlah) => {
+        if (!dataPeminjaman) return { denda: 0, status: "-", tanggal_batas: new Date()};
+        const max_peminjaman = 7;
+        const tanggal_peminjaman = new Date(dataPeminjaman.tanggal_peminjaman);
+        const tanggal_pengembalian = new Date(dataPeminjaman.tanggal_pengembalian);
+
+        const tanggal_batas_pengembalian = new Date(tanggal_peminjaman);
+        tanggal_batas_pengembalian.setDate(tanggal_batas_pengembalian.getDate() + max_peminjaman);
+
+        if (jumlah === 0) return { denda: 0, status: "-", tanggal_batas: tanggal_batas_pengembalian};
+        
+        const denda_awal = 500;
+        const hari_keterlambatan = Math.max(0, Math.floor((tanggal_pengembalian - tanggal_batas_pengembalian) / (1000 * 60 * 60 * 24)));
+        const totalDenda = hari_keterlambatan * denda_awal * jumlah;
+
+        if(totalDenda > 0) {
+            return { 
+                denda: totalDenda, 
+                status: "Terlambat",
+                tanggal_batas: tanggal_batas_pengembalian,
+            };
+        } else {
+            return { 
+                denda: 0, 
+                status: "Dipinjam",
+                tanggal_batas: tanggal_batas_pengembalian,
+            };
+        }
+    };
 
     const handleChange = (e) => {
         setFormData({
@@ -31,7 +61,7 @@ export default function DetailPeminjamanCreate() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token"),
+                "Authorization": "Bearer " + localStorage.getItem("auth_token"),
             },
             body: JSON.stringify(formData),
     });
@@ -43,17 +73,35 @@ export default function DetailPeminjamanCreate() {
     useEffect(() => {
         const fetchDatas = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/detailPeminjaman/users`, {
+                const bukuResponse = await fetch(`${API_BASE_URL}/buku`, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("auth_token"),
+                    },
+                });
+
+            if (!bukuResponse.ok) {
+                throw new Error(`Gagal mendapatkan daftar buku: ${bukuResponse.status}`);
+            }
+
+            const daftarBuku = await bukuResponse.json();
+            setAllBuku(daftarBuku);
+            
+            const peminjamanResponse = await fetch(`${API_BASE_URL}/peminjaman`, {
                 headers: {
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                    Authorization: "Bearer " + localStorage.getItem("auth_token"),
                 },
             });
             
-            const data = await response.json();
-            setAllBuku(data);
-            setAllPeminjaman(data);
+            if (!peminjamanResponse.ok) {
+                throw new Error(`Failed to fetch peminjaman: ${peminjamanResponse.status}`);
+            }
+            
+            const daftarPeminjaman = await peminjamanResponse.json();
+            setAllPeminjaman(daftarPeminjaman);
+            
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching data:", err);
+                alert("Gagal memuat data: " + err.message);
             }
         };
 
@@ -121,7 +169,7 @@ export default function DetailPeminjamanCreate() {
                                 type="float" 
                                 name="tanggal_pengembalian" 
                                 className="form-control"
-                                value={formData.tanggal_pengembalian}
+                                value={calculateDendaStatus.denda}
                                 onChange={handleChange}
                                 readOnly
                             />

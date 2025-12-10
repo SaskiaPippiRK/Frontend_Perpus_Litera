@@ -37,13 +37,13 @@ export default function PeminjamanCreate() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(localStorage.getItem("token"));
+        console.log(localStorage.getItem("auth_token"));
 
         await fetch(`${API_BASE_URL}/peminjaman/create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token"),
+                "Authorization": "Bearer " + localStorage.getItem("auth_token"),
             },
             body: JSON.stringify(formData),
     });

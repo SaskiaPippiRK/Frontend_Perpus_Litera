@@ -6,7 +6,7 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function DetailPeminjamanIndex() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [allDetailPeminjaman, setAllDetailPeminjaman] = useState([]);
     const [idPeminjaman, setIdPeminjaman] = useState("");
@@ -14,6 +14,7 @@ export default function DetailPeminjamanIndex() {
     const fetchDetailPeminjaman = async () => {
         try  {
             setLoading(true);
+            setError(null);
 
             const token = localStorage.getItem("auth_token");
             const response = await axios.get(`${API_BASE_URL}/detailPeminjaman/peminjaman/${idPeminjaman}`, {
@@ -21,19 +22,19 @@ export default function DetailPeminjamanIndex() {
                     "Authorization": `Bearer ${token}`
                 }
             });
+
             setAllDetailPeminjaman(response.data);
-            setError(null);
         } catch(err)  {
             console.error(err);
-            if(err.response?.status === 404)
-            {
+
+            if(err.response?.status === 404) {
                 setError("Detail Peminjaman tidak ditemukan");
-            } else if(err.response?.data?.message)
-            {
+            } else if(err.response?.data?.message) {
                 setError(err.response.data.message);
-            } else{
+            } else {
                 setError("Gagal memuat detail data Peminjaman dari API Laravel.");
             }
+
             setAllDetailPeminjaman([]);
         } finally{
             setLoading(false);
@@ -63,20 +64,11 @@ export default function DetailPeminjamanIndex() {
     if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     useEffect(() => {
-        // const fetchPeminjaman = async () => {
-        //     try {
-        //         const response = await fetch(`${API_BASE_URL}/peminjaman`, {
-        //             headers: {
-        //                 "Authorization": "Bearer " + localStorage.getItem("token")
-        //             }
-        //         });
-
-        //         const data = await response.json();
-        //         setAllPeminjaman(data);
-        //     } catch (error) {
-        //         console.error(error);
-        //     }
-        // };
+        if (!idPeminjaman) {
+            setLoading(false);
+            setAllDetailPeminjaman([]);
+            return;
+        }
 
         fetchDetailPeminjaman();
     }, []);
