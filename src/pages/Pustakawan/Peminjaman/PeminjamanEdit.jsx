@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { validatePengembalianForm } from "../../../js/script";
 
 const API_BASE_URL = 'http://localhost:8000/api'; 
 
 const PeminjamanEdit = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
-
+    
     const [currentUser, setCurrentUser] = useState(null);
     const [formData, setFormData] = useState({
         id_users: '',
@@ -61,6 +62,17 @@ const PeminjamanEdit = () => {
         e.preventDefault();
         setError(null);
 
+        const validationError = validatePengembalianForm({
+            id_users: formData.id_users,
+            tanggal_peminjaman: formData.tanggal_peminjaman,
+            tanggal_pengembalian: formData.tanggal_pengembalian
+        });
+        
+        if (validationError) {
+            setError(validationError);
+            return;
+        }  
+          
         try{
             const token = localStorage.getItem("auth_token");
             await axios.post(
@@ -83,7 +95,6 @@ const PeminjamanEdit = () => {
     };
 
     if (loading) return <div className="p-4 text-center">Memuat data peminjaman...</div>;
-    if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="page-wrappers py-4">
@@ -92,7 +103,7 @@ const PeminjamanEdit = () => {
                     <h2 className="page-title">Update Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Nama Peminjam</label>
                             <input
                                 type='text' 
@@ -101,7 +112,7 @@ const PeminjamanEdit = () => {
                                 readOnly></input>
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Tanggal Peminjaman</label>
                             <input 
                                 type="date" 
@@ -114,7 +125,7 @@ const PeminjamanEdit = () => {
                             />
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Tanggal Pengembalian</label>
                             <input 
                                 type="date" 
@@ -125,6 +136,7 @@ const PeminjamanEdit = () => {
                                 required 
                             />
                         </div>
+                        {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="button-group">
                             <button type="submit" className="btn btn-primary-tambah">

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom'; 
 import Logo from '../assets/img/LogoLitera.png';
+import { validateLoginForm } from '../js/script';
 
 const API_LOGIN_URL = 'http://localhost:8000/api/login'; 
 
@@ -25,92 +26,99 @@ const LoginPage = () => {
     setIsSubmitting(true);
     setError(null);
 
+    const validationError = validateLoginForm({ email: formData.email, password: formData.password });
+            if(validationError) 
+            {
+                setError(validationError);
+                setIsSubmitting(false);
+                return;
+            }
+    
+            setIsSubmitting(true);
+
     try {
-      const response = await axios.post(API_LOGIN_URL, formData);
-      const token = response.data.token;
-      const user = response.data.detail;
+        const response = await axios.post(API_LOGIN_URL, formData);
+        const token = response.data.token;
+        const user = response.data.detail;
 
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('role', user.role);
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('role', user.role);
 
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      alert("Login Berhasil! Selamat Datang.");
+        alert("Login Berhasil! Selamat Datang.");
 
-      if(user.role === "pustakawan") {
-        navigate('/pustakawan/buku');
-      } else if(user.role === "anggota") {
-        navigate('/anggota/buku');
-      } else {
-        navigate('/');
-      }
-    } catch(err) {
-      console.error("Login Gagal: ", err.response ? err.response.data : err.message);
-      if(err.response && err.response.status === 401) {
-        setError("Email atau Password salah.");
-      } else {
-        setError("Terjadi kesalahan koneksi atau server.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+        if(user.role === "pustakawan") {
+            navigate('/pustakawan/buku');
+        } else if(user.role === "anggota") {
+            navigate('/anggota/buku');
+        } else {
+            navigate('/');
+        }
+        } catch(err) {
+            console.error("Login Gagal: ", err.response ? err.response.data : err.message);
+        if(err.response && err.response.status === 401) {
+            setError("Email atau Password salah.");
+        } else {
+            setError("Terjadi kesalahan koneksi atau server.");
+        }
+        } finally {
+            setIsSubmitting(false);
+        }
   };
 
 return (
-  <div className="auth-page">
-    <div className="auth-card">
-      <img src={Logo} alt="Litera Logo" className="auth-logo" />
+    <div className="auth-page">
+        <div className="auth-card">
+        <img src={Logo} alt="Litera Logo" className="auth-logo" />
 
-      <h2 className="auth-title">Litera</h2>
-      <p className="auth-subtitle">Library Management</p>
+        <p className="auth-subtitle">Library Management</p>
 
-      <form onSubmit={handleSubmit} className="auth-form">
-        {error && <div className="alert alert-danger">{error}</div>}
+            <form onSubmit={handleSubmit} className="auth-form">
+                {error && <div className="alert alert-danger">{error}</div>}
 
-        <input
-          type="email"
-          id="email"
-          name="email"
-          className="form-control"
-          value={formData.email}
-          placeholder="Masukkan Email"
-          onChange={handleChange}
-          required
-        />
+                <input
+                type="email"
+                id="email"
+                name="email"
+                className="form-control"
+                value={formData.email}
+                placeholder="Masukkan Email"
+                onChange={handleChange}
+                />
 
-        <input
-          type="password"
-          id="password"
-          name="password"
-          className="form-control"
-          value={formData.password}
-          placeholder="Masukkan Password"
-          onChange={handleChange}
-          required
-        />
+                <input
+                type="password"
+                id="password"
+                name="password"
+                className="form-control"
+                value={formData.password}
+                placeholder="Masukkan Password"
+                onChange={handleChange}
+                />
 
-        <button
-          type="submit"
-          className="btn-primary-tambah auth-submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Loading...' : 'Sign In'}
-        </button>
-      </form>
+                <button
+                type="submit"
+                className="btn-primary-tambah auth-submit"
+                disabled={isSubmitting}
+                >
+                {isSubmitting ? 'Loading...' : 'Sign In'}
+                </button>
+            </form>
 
-      <p className="auth-switch">
-        Belum punya akun?{' '}
-        <button
-          type="button"
-          className="link-button"
-          onClick={() => navigate('/register')}
-        >
-          Register di sini
-        </button>
-      </p>
-    </div>
-  </div>
-);
+            <p className="auth-switch">
+                Belum punya akun?{' '}
+                <button
+                type="button"
+                className="link-button"
+                onClick={() => navigate('/register')}
+                >
+                Register di sini
+                </button>
+            </p>
+            </div>
+        </div>
+    );
 
 };
 

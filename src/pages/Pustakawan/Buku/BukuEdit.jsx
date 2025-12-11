@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { validateBukuForm } from '../../../js/script';
 
 const API_BASE_URL = 'http://localhost:8000/api'; 
 
@@ -44,6 +45,13 @@ const BukuEdit = () => {
         e.preventDefault();
         setError(null);
 
+        const validationError = validateBukuForm(formData);
+            if (validationError) {
+                setError(validationError);
+                setIsSubmitting(false);
+                return;
+            }
+
         try{
             await axios.post(`${API_BASE_URL}/buku/update/${id}`, formData);
 
@@ -57,7 +65,6 @@ const BukuEdit = () => {
     };
 
     if (loading) return <div className="p-4 text-center">Memuat data buku...</div>;
-    if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="page-wrappers py-4">
@@ -74,7 +81,6 @@ const BukuEdit = () => {
                                 className="form-control"
                                 value={formData.judul}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -86,7 +92,6 @@ const BukuEdit = () => {
                                 className="form-control"
                                 value={formData.penulis}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -98,7 +103,6 @@ const BukuEdit = () => {
                                 className="form-control"
                                 value={formData.penerbit}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -110,7 +114,6 @@ const BukuEdit = () => {
                                 className="form-control"
                                 value={formData.tahun_terbit}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -121,7 +124,6 @@ const BukuEdit = () => {
                                 className="form-control"
                                 value={formData.kategori}
                                 onChange={handleChange}
-                                required
                             >
                                 <option value="">-- Pilih Kategori --</option>
                                 <option value="Fiksi">Fiksi</option>
@@ -139,9 +141,10 @@ const BukuEdit = () => {
                                 className="form-control"
                                 value={formData.lokasi_buku}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
+
+                        {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="button-group">
                             <button type="submit" className="btn btn-primary-tambah">

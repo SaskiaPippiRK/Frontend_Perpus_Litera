@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { validateDetailPeminjaman } from '../../../js/script';
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function DetailPeminjamanCreate() {
     const navigate = useNavigate();
+    const [error, setError] = useState(null);
+    
     
     const [allBuku, setAllBuku] = useState([]);
     const [allPeminjaman, setAllPeminjaman] = useState([]);
@@ -38,6 +41,20 @@ export default function DetailPeminjamanCreate() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+
+        const validationError = validateDetailPeminjaman(
+            formData.id_users,
+            formData.id_peminjaman,
+            formData.id_buku,
+            formData.jumlah,
+            formData.denda
+        );
+        
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
 
         if(!formData.id_peminjaman) {
             alert("Harap pilih Nama Peminjam terlebih dahulu!");
@@ -110,7 +127,7 @@ export default function DetailPeminjamanCreate() {
                                 className="form-control"
                                 value={formData.id_users}
                                 onChange={handleChange}
-                                required>
+                                >
 
                                 <option value="">-- Pilih Peminjam --</option>
                                 {allPeminjaman.map((item) => (
@@ -128,7 +145,7 @@ export default function DetailPeminjamanCreate() {
                                 className="form-control"
                                 value={formData.id_buku}
                                 onChange={handleChange}
-                                required>
+                                >
 
                                 <option value="">-- Pilih Buku --</option>
                                 {allBuku.map((buku) => (
@@ -147,7 +164,7 @@ export default function DetailPeminjamanCreate() {
                                 className="form-control"
                                 value={formData.jumlah}
                                 onChange={handleChange}
-                                required 
+                                 
                             />
                         </div>
 
@@ -161,6 +178,7 @@ export default function DetailPeminjamanCreate() {
                                 onChange={handleChange}
                             />
                         </div>
+                        {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="d-flex gap-2">
                             <button type="submit" className="btn btn-primary-tambah" style={{backgroundColor: '#D11F26', color: 'white'}}>

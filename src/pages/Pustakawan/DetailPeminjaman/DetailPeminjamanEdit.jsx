@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; 
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { validateDetailPeminjamanEdit } from '../../../js/script';
 
 const API_BASE_URL = 'http://localhost:8000/api'; 
 
@@ -12,7 +13,7 @@ const DetailPeminjamanEdit = () => {
     const [allPeminjaman, setAllPeminjaman] = useState([]);
 
     const [formData, setFormData] = useState({
-        id_detailPeminjaman: '',
+        id_detail: '',
         id_peminjaman: '',
         id_buku: '',
         jumlah: '',
@@ -46,13 +47,13 @@ const DetailPeminjamanEdit = () => {
                 const pinjamData = resPinjam.data.data ?? resPinjam.data;
 
                 setFormData({
-                    id_detailPeminjaman: detailData.id_detailPeminjaman || "",
+                    id_detail: detailData.id_detail || "",
                     id_peminjaman: pinjamData.id_peminjaman || "",
                     id_buku: bukuData.id_buku || "",
                     jumlah: detailData.jumlah || "",
                     status: detailData.status || "",
                     denda: detailData.denda || "",
-                    id_users: pinjamData.id_user || "" 
+                    id_users: pinjamData.id_users || "" 
                 });
                 setLoading(false);
             } catch(err) {
@@ -93,6 +94,18 @@ const DetailPeminjamanEdit = () => {
         e.preventDefault();
         setError(null);
 
+        const validationError = validateDetailPeminjamanEdit({
+            id_peminjaman: formData.id_peminjaman,
+            id_buku: formData.id_buku,
+            jumlah: formData.jumlah,
+            denda: formData.denda
+        });
+        
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
         try {
             await axios.post(
                 `${API_BASE_URL}/detailPeminjaman/update/${id}`,
@@ -109,23 +122,21 @@ const DetailPeminjamanEdit = () => {
     };
 
     if (loading) return <div className="p-4 text-center">Memuat data...</div>;
-    if (error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="page-wrappers py-4">
             <div className="container-fluid">
                 <div className="card shadow-lg rounded-4 content-card p-4">
-                    <h2 className="page-title">Update Peminjaman</h2>
+                    <h2 className="page-title">Update Detail Peminjaman</h2>
 
                     <form onSubmit={handleSubmit} className="mt-3">
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">ID Peminjaman (User)</label>
                             <select
                                 name="id_peminjaman"
                                 className="form-control"
                                 value={formData.id_peminjaman}
-                                onChange={handleChange}
-                                required>
+                                disabled>
                                 <option value="">-- Pilih Peminjaman --</option>
                                 {allPeminjaman.map((peminjam) => (
                                     <option key={peminjam.id_peminjaman} value={peminjam.id_peminjaman}>
@@ -135,14 +146,14 @@ const DetailPeminjamanEdit = () => {
                             </select>
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Buku yang dipinjam</label>
                             <select
                                 name="id_buku"
                                 className="form-control"
                                 value={formData.id_buku}
                                 onChange={handleChange}
-                                required>
+                                >
                                 <option value="">-- Pilih Buku --</option>
                                 {allBuku.map((buku) => (
                                     <option key={buku.id_buku} value={buku.id_buku}>
@@ -152,7 +163,7 @@ const DetailPeminjamanEdit = () => {
                             </select>
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Jumlah Peminjaman</label>
                             <input 
                                 type="number"
@@ -160,25 +171,25 @@ const DetailPeminjamanEdit = () => {
                                 className="form-control"
                                 value={formData.jumlah}
                                 onChange={handleChange}
-                                required 
+                                 
                             />
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Status</label>
                             <select 
                                 name="status"
                                 className="form-control"
                                 value={formData.status}
                                 onChange={handleChange}
-                                required
+                                
                             >
                                 <option value="Dipinjam">Dipinjam</option>
                                 <option value="Kembali">Kembali</option>
                             </select>
                         </div>
 
-                        <div className="mb-3">
+                        <div className="input-group">
                             <label className="form-label">Denda</label>
                             <input 
                                 type="number" 
@@ -188,6 +199,8 @@ const DetailPeminjamanEdit = () => {
                                 onChange={handleChange}
                             />
                         </div>
+
+                        {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="button-group">
                             <button type="submit" className="btn btn-primary-tambah">

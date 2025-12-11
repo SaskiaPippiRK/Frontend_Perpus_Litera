@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'; 
+import { validateBukuForm } from '../js/script';
 
 const API_BASE_URL = 'http://localhost:8000/api'; 
 
@@ -29,6 +30,13 @@ const BukuForm = ({ onBukuCreated }) => {
         setIsSubmitting(true);
         setError(null);
 
+        const validationError = validateBukuForm(formData);
+        if (validationError) {
+            setError(validationError);
+            setIsSubmitting(false);
+            return;
+        }
+
         try{
             const response = await axios.post(`${API_BASE_URL}/buku/create`, formData);
             alert(`Buku berhasil dibuat`);
@@ -54,6 +62,7 @@ const BukuForm = ({ onBukuCreated }) => {
                 <div className="card shadow-lg rounded-4 content-card p-4">
                 
 
+
                     <form onSubmit={handleSubmit} className="mt-3">
                         <div className="input-group">
                             <label className="form-label">Judul Buku</label>
@@ -63,7 +72,6 @@ const BukuForm = ({ onBukuCreated }) => {
                                 className="form-control"
                                 value={formData.judul}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -75,7 +83,6 @@ const BukuForm = ({ onBukuCreated }) => {
                                 className="form-control"
                                 value={formData.penulis}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -87,7 +94,6 @@ const BukuForm = ({ onBukuCreated }) => {
                                 className="form-control"
                                 value={formData.penerbit}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -99,7 +105,6 @@ const BukuForm = ({ onBukuCreated }) => {
                                 className="form-control"
                                 value={formData.tahun_terbit}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -110,7 +115,6 @@ const BukuForm = ({ onBukuCreated }) => {
                                 className="form-control"
                                 value={formData.kategori}
                                 onChange={handleChange}
-                                required
                             >
                                 <option value="">-- Pilih Kategori --</option>
                                 <option value="Fiksi">Fiksi</option>
@@ -128,9 +132,10 @@ const BukuForm = ({ onBukuCreated }) => {
                                 className="form-control"
                                 value={formData.lokasi_buku}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
+
+                        {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="button-group">
                             <button type="submit" className="btn btn-primary-tambah">

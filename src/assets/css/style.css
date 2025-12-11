@@ -781,8 +781,12 @@ select.form-control {
         width: 80px !important;
     }
 
-    .menu-item span {
+    .sidebar.collapsed .menu-item span {
         display: none;
+    }
+
+    .sidebar:not(.collapsed) .menu-item span {
+        display: inline;
     }
 
     .content-area
@@ -844,8 +848,12 @@ select.form-control {
         width: 40px;
     }
 
-    .menu-item span {
+    .sidebar.collapsed .menu-item span {
         display: none;
+    }
+
+    .sidebar:not(.collapsed) .menu-item span {
+        display: inline;
     }
 
     .content-area

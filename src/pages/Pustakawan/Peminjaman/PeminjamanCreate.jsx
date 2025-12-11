@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { validatePeminjamanForm } from "../../../js/script";
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
 export default function PeminjamanCreate() {
     const navigate = useNavigate();
     const [users, setAllUsers] = useState([]);
+    const [error, setError] = useState(null);
     const [formData, setFormData] = useState({
         id_users: '',
         tanggal_peminjaman: '',
@@ -37,6 +39,17 @@ export default function PeminjamanCreate() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+
+        const validationError = validatePeminjamanForm({
+            id_users: formData.id_users,
+            tanggal_peminjaman: formData.tanggal_peminjaman,
+        });
+
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
         console.log(localStorage.getItem("auth_token"));
 
         await fetch(`${API_BASE_URL}/peminjaman/create`, {
@@ -85,7 +98,7 @@ export default function PeminjamanCreate() {
                                 className="form-control"
                                 value={formData.id_users}
                                 onChange={handleChange}
-                                required>
+                                >
 
                                 <option value="">-- Pilih Peminjam --</option>
 
@@ -105,7 +118,6 @@ export default function PeminjamanCreate() {
                                 className="form-control"
                                 value={formData.tanggal_peminjaman}
                                 onChange={handleChange}
-                                required 
                             />
                         </div>
 
@@ -119,6 +131,7 @@ export default function PeminjamanCreate() {
                                 readOnly
                             />
                         </div>
+                        {error && <div className="alert alert-danger">{error}</div>}
 
                         <div className="button-group">
                             <button type="submit" className="btn btn-primary-tambah">

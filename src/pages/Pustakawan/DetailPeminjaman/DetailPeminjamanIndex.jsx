@@ -73,7 +73,6 @@ export default function DetailPeminjamanIndex() {
     }, []); 
     
     if(loading) return <div className="p-4 text-center">Memuat data...</div>;
-    if(error) return <div className="p-4 alert alert-danger">{error}</div>;
 
     return (
         <div className="page-wrappers py-4">
@@ -82,9 +81,10 @@ export default function DetailPeminjamanIndex() {
                     <h2 className = "page-title">Detail Peminjaman</h2>
 
                     <div className="d-flex gap-2 mb-3 flex-column">
-                        <div className="d-flex gap-2 flex-row">
+                        <div className="d-flex gap-2 flex-row align-items-center">
                             <input type="text" className="form-control" placeholder="Masukkan ID Peminjaman" value={idPeminjaman} onChange={(e) => setIdPeminjaman(e.target.value)} />
-                        <button className="btn btn-secondary" onClick={fetchDetailPeminjaman}>Cari</button>
+                            <button className="btn btn-secondary" onClick={fetchDetailPeminjaman}>Cari</button>
+                            {error && <div className="alert alert-danger mt-4">{error}</div>}
                         </div>
                         
                         <button className="btn btn-primary-tambah" onClick={() => navigate("/pustakawan/detailPeminjaman/create")}>
@@ -113,8 +113,14 @@ export default function DetailPeminjamanIndex() {
                                     </div>
 
                                     <div className="text-muted small mb-1">
+                                        Jumlah: {item.jumlah}
+                                    </div>
+
+                                    <div className="text-muted small mb-1">
                                         Denda: Rp {item.denda},00
                                     </div>
+
+                                    {error && <div className="alert alert-danger">{error}</div>}
 
                                     <div className="d-flex gap-2 mt-auto pt-3">
                                         <Link 
